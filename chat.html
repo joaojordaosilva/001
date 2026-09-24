@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot - FAQ</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #e9ecef; display: flex; flex-direction: column; height: 100vh; }
+        header { background-color: hwb(253 1% 41%); color: white; padding: 15px; display: flex; align-items: center; }
+        .back-btn { color: white; text-decoration: none; font-size: 16px; margin-right: 15px; font-weight: bold; }
+        
+        .chat-container { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .msg-bot { background: white; padding: 15px; border-radius: 10px 10px 10px 0; max-width: 75%; align-self: flex-start; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .msg-user { background: #050385; color: white; padding: 15px; border-radius: 10px 10px 0 10px; max-width: 75%; align-self: flex-end; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        
+        .chat-input { display: flex; padding: 15px; background: white; border-top: 1px solid #ddd; }
+        .chat-input input { flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-right: 10px; font-size: 16px; }
+        .chat-input button { padding: 10px 20px; background: #150269; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="back-btn">&larr; Voltar</a>
+        
+    </header>
+
+    <div class="chat-container">
+        <div class="msg-bot">Olá, calouro! Como posso ajudar você hoje com suas dúvidas sobre o instituto?</div>
+        <div class="msg-user">Onde posso ver minha grade de aulas?</div>
+        <div class="msg-bot">Você pode visualizar sua grade acessando o portal acadêmico oficial com seu número de matrícula. Mais alguma dúvida?</div>
+    </div>
+
+    
+    <div class="chat-input">
+        <input type="text" placeholder="Digite sua pergunta...">
+        <button type="button">Enviar</button>
+    </div>
+
+</body>
+</html>
