@@ -3,13 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GIC</title>
+    <title>Portal do Calouro - IC</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f9; }
+        
+        /* Cabeçalho principal */
         header { background-color: #0056b3; color: white; padding: 15px; display: flex; align-items: center; justify-content: space-between; }
         .menu-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
         
-        /* Menu Lateral*/
+        /* Barra de Navegação Horizontal */
+        .top-navbar {
+            background-color: #004085; 
+            display: flex;
+            overflow-x: auto;
+        }
+        .top-navbar a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            flex-grow: 1;
+            transition: background-color 0.2s;
+        }
+        .top-navbar a:hover { background-color: #002752; }
+        .top-navbar a.active {
+            background-color: #0056b3;
+            border-bottom: 4px solid #ffc107; 
+        }
+
+        /* Menu Lateral */
         #menu-toggle { display: none; }
         .sidebar { position: fixed; top: 0; left: -250px; width: 250px; height: 100%; background-color: #333; color: white; transition: 0.3s; padding-top: 60px; z-index: 1000; box-shadow: 2px 0 5px rgba(0,0,0,0.5); }
         .sidebar a { display: block; color: white; padding: 15px 20px; text-decoration: none; font-size: 18px; border-bottom: 1px solid #444; }
@@ -17,21 +40,24 @@
         #menu-toggle:checked ~ .sidebar { left: 0; }
         .close-btn { position: absolute; top: 15px; right: 20px; font-size: 30px; color: white; cursor: pointer; }
         
-        /*Notícias */
+        /* Carrossel de Notícias */
         .news-section { padding: 20px; }
         .carousel { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 15px; scroll-snap-type: x mandatory; }
         .news-card { min-width: 260px; scroll-snap-align: start; background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); overflow: hidden; text-decoration: none; color: black; }
         .news-card img { width: 100%; height: 150px; object-fit: cover; background-color: #ddd; }
         .news-card div { padding: 15px; }
+        h3 { color: #333; }
         
-        /* Botão do Chatbot */
-        .chat-btn { position: fixed; bottom: 20px; right: 20px; background-color: #0c0268; color: white; padding: 15px 25px; border-radius: 50px; text-decoration: none; font-size: 16px; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: 0.2s; }
-        .chat-btn:hover { background-color: #218838; }
+        
+        .floating-btn { position: fixed; right: 20px; background-color: #0056b3; color: white; padding: 15px 25px; border-radius: 50px; text-decoration: none; font-size: 16px; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: 0.2s; }
+        .floating-btn:hover { background-color: #004085; }
+        
+        .calc-btn { bottom: 85px; } /* Fica acima do botão de chat */
+        .chat-btn { bottom: 20px; }
     </style>
 </head>
 <body>
 
-   
     <input type="checkbox" id="menu-toggle">
     
     <nav class="sidebar">
@@ -42,24 +68,38 @@
     <header>
         <label for="menu-toggle" class="menu-btn">&#9776;</label>
         <h2>Instituto de Computação</h2>
-        <div style="width: 24px;"></div> <!-- Espaçador para centralizar o título -->
+        <div style="width: 24px;"></div>
     </header>
+
+    <nav class="top-navbar">
+        <a href="index.html" class="active">Início</a>
+        <a href="tutoriais.html">Tutoriais</a>
+        <a href="disciplinas.html">Disciplinas</a>
+    </nav>
 
     <main class="news-section">
         <h3>Mural de Notícias</h3>
         <div class="carousel">
-            
-            <a href="https://ic.ufal.br/pt-br" class="news-card" target="_blank">
+            <a href="https://site-oficial-do-ic.br" class="news-card" target="_blank">
+                <img src="https://via.placeholder.com/260x150?text=Notícia+1" alt="Notícia 1">
                 <div>
                     <h4>Bem-vindo ao semestre!</h4>
                     <p>Confira o calendário acadêmico para os calouros.</p>
                 </div>
             </a>
-          
+            <a href="https://site-oficial-do-ic.br" class="news-card" target="_blank">
+                <img src="https://via.placeholder.com/260x150?text=Notícia+2" alt="Notícia 2">
+                <div>
+                    <h4>Grade Curricular</h4>
+                    <p>Veja as disciplinas essenciais do primeiro período.</p>
+                </div>
+            </a>
         </div>
     </main>
 
-    <a href="chat.html" class="chat-btn">💬 Falar com Chatbot</a>
+   
+    <a href="calculadora.html" class="floating-btn calc-btn">📊 Calculadora</a>
+    <a href="chat.html" class="floating-btn chat-btn">💬 Chatbot</a>
 
 </body>
 </html>
