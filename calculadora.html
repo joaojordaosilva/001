@@ -3,13 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Média</title>
+    <title>Calculadora de Média - Portal do Calouro</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f9; }
         
-        header { background-color: #0056b3; color: white; padding: 15px; display: flex; align-items: center; }
-        .back-btn { color: white; text-decoration: none; font-size: 24px; margin-right: 15px; font-weight: bold; line-height: 1; }
+        /* Cabeçalho principal */
+        header { background-color: #0056b3; color: white; padding: 15px; display: flex; align-items: center; justify-content: space-between; }
+        .menu-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
         
+        /* Barra de Navegação Horizontal */
+        .top-navbar {
+            background-color: #004085; 
+            display: flex;
+            overflow-x: auto;
+        }
+        .top-navbar a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            flex-grow: 1;
+            transition: background-color 0.2s;
+        }
+        .top-navbar a:hover { background-color: #002752; }
+        .top-navbar a.active {
+            background-color: #0056b3;
+            border-bottom: 4px solid #ffc107; 
+        }
+
+        /* Menu Lateral */
+        #menu-toggle { display: none; }
+        .sidebar { position: fixed; top: 0; left: -250px; width: 250px; height: 100%; background-color: #333; color: white; transition: 0.3s; padding-top: 60px; z-index: 1000; box-shadow: 2px 0 5px rgba(0,0,0,0.5); }
+        .sidebar a { display: block; color: white; padding: 15px 20px; text-decoration: none; font-size: 18px; border-bottom: 1px solid #444; }
+        .sidebar a:hover { background-color: #575757; }
+        #menu-toggle:checked ~ .sidebar { left: 0; }
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 30px; color: white; cursor: pointer; }
+        
+        /* Conteúdo da Calculadora */
         .content { padding: 20px; max-width: 500px; margin: 20px auto; }
         .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         
@@ -22,20 +53,39 @@
         .calc-action-btn { width: 100%; padding: 12px; background-color: #0056b3; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; margin-top: 10px; transition: 0.2s; }
         .calc-action-btn:hover { background-color: #004085; }
 
-        /* Área de resultado fictícia */
-        .result-box { margin-top: 20px; padding: 15px; background-color: #e2eef9; border-left: 5px solid #0056b3; border-radius: 4px; display: none; }
+        /* Área de resultado  */
+        .result-box { margin-top: 20px; padding: 15px; background-color: #e2eef9; border-left: 5px solid #0056b3; border-radius: 4px; display: block; }
         .result-box p { margin: 0; color: #004085; font-weight: bold; }
+
+        /* Botão Flutuante do Chatbot */
+        .floating-btn { position: fixed; bottom: 20px; right: 20px; background-color: #0056b3; color: white; padding: 15px 25px; border-radius: 50px; text-decoration: none; font-size: 16px; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: 0.2s; }
+        .floating-btn:hover { background-color: #004085; }
     </style>
 </head>
 <body>
 
+    <input type="checkbox" id="menu-toggle">
+    
+    <nav class="sidebar">
+        <label for="menu-toggle" class="close-btn">&times;</label>
+        <a href="sobre.html">Sobre nós</a>
+    </nav>
+
     <header>
-       
-        <a href="index.html" class="back-btn">&larr;</a>
-        <h2>Calculadora de Média</h2>
+        <label for="menu-toggle" class="menu-btn">&#9776;</label>
+        <h2>Instituto de Computação</h2>
+        <div style="width: 24px;"></div>
     </header>
 
-    <div class="content">
+    
+    <nav class="top-navbar">
+        <a href="index.html">Início</a>
+        <a href="tutoriais.html">Tutoriais</a>
+        <a href="disciplinas.html">Disciplinas</a>
+        <a href="calculadora.html" class="active">Calculadora</a>
+    </nav>
+
+    <main class="content">
         <div class="card">
             <h3>Simule suas Notas</h3>
             <p style="color: #666; margin-bottom: 20px; font-size: 14px;">Preencha suas notas da AB1 e AB2 para saber quanto precisa na reavaliação ou final.</p>
@@ -57,13 +107,14 @@
             
             <button class="calc-action-btn" type="button">Calcular Média</button>
 
-            <!-- exemplo visual apenas-->
-            <div class="result-box" style="display: block;">
-                
-                
+            <div class="result-box">
+                <p>Situação: Em Prova Final</p>
+                <p>Você precisa tirar no mínimo 6.5 na prova final para ser aprovado.</p>
             </div>
         </div>
-    </div>
+    </main>
+
+    <a href="chat.html" class="floating-btn">💬 Chatbot</a>
 
 </body>
 </html>
