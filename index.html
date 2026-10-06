@@ -5,92 +5,157 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GIC</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f9; }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f9; display: flex; flex-direction: column; min-height: 100vh; }
         
-        header { background-color: #0056b3; color: white; padding: 15px; display: flex; align-items: center; justify-content: space-between; }
-        .menu-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+        /* Cabeçalho centralizado sem o botão de menu */
+        header { background-color: #0056b3; color: white; padding: 15px; display: flex; align-items: center; justify-content: center; }
         
-        .top-navbar {
+        /* Logo central no cabeçalho (Imagem) */
+        .logo img { 
+            height: 45px; 
+            width: auto; 
+            display: block; 
+        }
+
+        /* Contêiner da navegação */
+        .nav-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 10px;
+            position: sticky;
+            top: 0;
+            z-index: 998;
+        }
+
+        /* Barra de Navegação em Cápsula */
+        .capsule-nav {
             background-color: #004085; 
             display: flex;
+            border-radius: 50px; 
+            padding: 5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             overflow-x: auto;
+            max-width: 95%;
         }
-        .top-navbar a {
+        
+        .capsule-nav a {
             color: white;
-            padding: 14px 20px;
+            padding: 10px 20px;
             text-decoration: none;
             text-align: center;
             font-weight: bold;
-            flex-grow: 1;
-            transition: background-color 0.2s;
+            border-radius: 50px; 
+            transition: background-color 0.2s, color 0.2s;
+            white-space: nowrap;
         }
-        .top-navbar a:hover { background-color: #002752; }
-        .top-navbar a.active {
-            background-color: #0056b3;
-            border-bottom: 4px solid #ffc107; 
-        }
-
-        #menu-toggle { display: none; }
-        .sidebar { position: fixed; top: 0; left: -250px; width: 250px; height: 100%; background-color: #333; color: white; transition: 0.3s; padding-top: 60px; z-index: 1000; box-shadow: 2px 0 5px rgba(0,0,0,0.5); }
-        .sidebar a { display: block; color: white; padding: 15px 20px; text-decoration: none; font-size: 18px; border-bottom: 1px solid #444; }
-        .sidebar a:hover { background-color: #575757; }
-        #menu-toggle:checked ~ .sidebar { left: 0; }
-        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 30px; color: white; cursor: pointer; }
         
+        .capsule-nav a:hover { background-color: #002752; }
+        
+        /* Aba ativa (destacada em branco) */
+        .capsule-nav a.active {
+            background-color: #ffffff; 
+            color: #004085; 
+        }
+        
+        /* O conteúdo principal ocupa o espaço vazio para empurrar o rodapé para baixo */
+        main.content-area { flex: 1; }
+
         .news-section { padding: 20px; }
         .carousel { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 15px; scroll-snap-type: x mandatory; }
         .news-card { min-width: 260px; scroll-snap-align: start; background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); overflow: hidden; text-decoration: none; color: black; }
         .news-card img { width: 100%; height: 150px; object-fit: cover; background-color: #ddd; }
         .news-card div { padding: 15px; }
-        h3 { color: #333; }
+        h3 { color: #333; margin-top: 0; }
         
-        /* Apenas o botão do chatbot permanece flutuando */
-        .floating-btn { position: fixed; bottom: 20px; right: 20px; background-color: #0056b3; color: white; padding: 15px 25px; border-radius: 50px; text-decoration: none; font-size: 16px; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: 0.2s; }
-        .floating-btn:hover { background-color: #004085; }
+        /* Novo Rodapé com Informações */
+        .site-footer { background-color: #333; color: white; padding: 40px 20px 20px; margin-top: 40px; }
+        .footer-content { display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between; max-width: 900px; margin: 0 auto; }
+        .footer-section { flex: 1; min-width: 200px; }
+        .footer-section h4 { color: #ffc107; margin-top: 0; margin-bottom: 15px; font-size: 18px; }
+        .footer-section p { font-size: 14px; line-height: 1.6; margin: 0; color: #ccc; }
+        .footer-bottom { text-align: center; margin-top: 30px; padding-top: 15px; border-top: 1px solid #55; font-size: 13px; color: #999; }
+
+        /* Botão do chatbot flutuante */
+        .floating-btn { position: fixed; bottom: 20px; right: 20px; background-color: #0056b3; color: white; padding: 15px 25px; border-radius: 50px; text-decoration: none; font-size: 16px; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: 0.2s; z-index: 999; }
+        .floating-btn:hover { background-color: #002752; }
     </style>
 </head>
 <body>
 
-    <input type="checkbox" id="menu-toggle">
-    
-    <nav class="sidebar">
-        <label for="menu-toggle" class="close-btn">&times;</label>
-        <a href="sobre.html">Sobre nós</a>
-    </nav>
-
     <header>
-        <label for="menu-toggle" class="menu-btn">&#9776;</label>
-        <h2>Instituto de Computação</h2>
-        <div style="width: 24px;"></div>
+        <a href="index.html" class="logo">
+            <img src="logo.png" alt="Logo GIC">
+        </a>
     </header>
 
-    <!--calculadora-->
-    <nav class="top-navbar">
-        <a href="index.html" class="active">Início</a>
-        <a href="tutoriais.html">Tutoriais</a>
-        <a href="disciplinas.html">Disciplinas</a>
-        <a href="calculadora.html">Calculadora</a>
-    </nav>
+    <div class="nav-wrapper">
+        <nav class="capsule-nav">
+            <a href="index.html" class="active">Início</a>
+            <a href="tutoriais.html">Tutoriais</a>
+            <a href="disciplinas.html">Disciplinas</a>
+            <a href="calculadora.html">Calculadora</a>
+        </nav>
+    </div>
 
-    <main class="news-section">
-        <h3>Mural de Notícias</h3>
-        <div class="carousel">
-            <a href="https://site-oficial-do-ic.br" class="news-card" target="_blank">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcQEada5uJkQhYaFCpTQsNUVAW2FOGIJ15x8-prG0c42noVd4SGh7mPQkF&s=10" alt="Notícia 1">
-                <div>
-                    <h4>Bem-vindo ao semestre!</h4>
-                    <p>Mensagem de boas-vindas e informações iniciais para os novos alunos do IC.</p>
-                </div>
-            </a>
-            <a href="https://site-oficial-do-ic.br" class="news-card" target="_blank">
-                <img src="https://noticias.ufal.br/estudante/noticias/2025/10/ufal-aprova-calendario-academico-2026-com-inicio-em-23-de-fevereiro/@@images/image-400-9e740ca6b4901d3daf2be2c98cb3ca65.jpeg" alt="Calendário Acadêmico">
-                <div>
-                    <h4>Calendário Acadêmico</h4>
-                    <p>Confira as datas importantes e os prazos do ano letivo de 2026.</p>
-                </div>
-            </a>
-        </div>
+    <main class="content-area">
+        
+        <!-- Nova Área: Sou Calouro -->
+        <section class="news-section">
+            <h3>Sou Calouro</h3>
+            <div class="carousel">
+                <!-- O link está com '#' pois ainda não é funcional -->
+                <a href="#" class="news-card">
+                    <img src="calouro.png" alt="Sou calouro" style="max-width: 100%; height: auto; object-fit: contain;">
+                    <div>
+                        <h4>Primeiros Passos no IC</h4>
+                        <p>Descubra tudo o que você precisa saber para começar sua jornada acadêmica com tranquilidade.</p>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Área Antiga: Mural de Notícias -->
+        <section class="news-section">
+            <h3>Mural de Notícias</h3>
+            <div class="carousel">
+                <a href="https://site-oficial-do-ic.br" class="news-card" target="_blank">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcQEada5uJkQhYaFCpTQsNUVAW2FOGIJ15x8-prG0c42noVd4SGh7mPQkF&s=10" alt="Notícia 1">
+                    <div>
+                        <h4>Bem-vindo ao semestre!</h4>
+                        <p>Mensagem de boas-vindas e informações iniciais para os novos alunos do IC.</p>
+                    </div>
+                </a>
+                <a href="https://site-oficial-do-ic.br" class="news-card" target="_blank">
+                    <img src="https://noticias.ufal.br/estudante/noticias/2025/10/ufal-aprova-calendario-academico-2026-com-inicio-em-23-de-fevereiro/@@images/image-400-9e740ca6b4901d3daf2be2c98cb3ca65.jpeg" alt="Calendário Acadêmico">
+                    <div>
+                        <h4>Calendário Acadêmico</h4>
+                        <p>Confira as datas importantes e os prazos do ano letivo de 2026.</p>
+                    </div>
+                </a>
+            </div>
+        </section>
     </main>
+
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Equipe de Desenvolvimento</h4>
+                <p><strong>João:</strong> Front-end & UI/UX<br>
+                   <strong>Josivaldo:</strong> Back-end & Arquitetura<br>
+                   <strong>Dárcio:</strong> Banco de Dados & Gestão</p>
+            </div>
+            <div class="footer-section">
+                <h4>Suporte e Links Úteis</h4>
+                <p>Email: suporte-calouros@ic.br<br>
+                   Coordenação: (00) 0000-0000<br>
+                   <a href="#" style="color: #ffc107; text-decoration: none;">Portal Institucional Oficial</a></p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Instituto de Computação - Portal do Calouro</p>
+        </div>
+    </footer>
 
     <a href="chat.html" class="floating-btn">💬 Chatbot</a>
 
