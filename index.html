@@ -3,30 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GIC</title>
+    <title>GIC - Início</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f9; display: flex; flex-direction: column; min-height: 100vh; }
         
-        /* Cabeçalho centralizado sem o botão de menu */
+        /* Cabeçalho */
         header { background-color: #0056b3; color: white; padding: 15px; display: flex; align-items: center; justify-content: center; }
-        
-        /* Logo central no cabeçalho (Imagem) */
-        .logo img { 
-            height: 45px; 
-            width: auto; 
-            display: block; 
-        }
+        .logo img { height: 45px; width: auto; display: block; }
 
-        /* Contêiner da navegação */
+        /* Contêiner da navegação e logo chapéu */
         .nav-wrapper {
             display: flex;
             justify-content: center;
             align-items: center;
+            gap: 15px;
             padding: 20px 10px;
             position: sticky;
             top: 0;
             z-index: 998;
         }
+        
+        .hat-logo img { height: 40px; width: auto; transition: transform 0.2s; }
+        .hat-logo:hover img { transform: scale(1.1); }
 
         /* Barra de Navegação em Cápsula */
         .capsule-nav {
@@ -38,47 +36,117 @@
             overflow-x: auto;
             max-width: 95%;
         }
-        
         .capsule-nav a {
-            color: white;
-            padding: 10px 20px;
-            text-decoration: none;
-            text-align: center;
-            font-weight: bold;
-            border-radius: 50px; 
-            transition: background-color 0.2s, color 0.2s;
-            white-space: nowrap;
+            color: white; padding: 10px 20px; text-decoration: none; text-align: center;
+            font-weight: bold; border-radius: 50px; transition: 0.2s; white-space: nowrap;
         }
-        
         .capsule-nav a:hover { background-color: #002752; }
         
-        /* Aba ativa (destacada em branco) */
-        .capsule-nav a.active {
-            background-color: #ffffff; 
-            color: #004085; 
-        }
-        
-        /* O conteúdo principal ocupa o espaço vazio para empurrar o rodapé para baixo */
-        main.content-area { flex: 1; }
+        main.content-area { flex: 1; max-width: 1000px; margin: 0 auto; width: 100%; }
+        section { padding: 20px; }
+        h3 { color: #333; margin-bottom: 15px; text-transform: uppercase; font-size: 16px; letter-spacing: 1px; }
 
-        .news-section { padding: 20px; }
+        /* PADRONIZAÇÃO DE ALTURA PARA TODAS AS JANELAS */
+        :root {
+            --altura-janelas: 240px; 
+        }
+
+        /* Estilo do Carrossel de Notícias */
         .carousel { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 15px; scroll-snap-type: x mandatory; }
-        .news-card { min-width: 260px; scroll-snap-align: start; background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); overflow: hidden; text-decoration: none; color: black; }
-        .news-card img { width: 100%; height: 150px; object-fit: cover; background-color: #ddd; }
-        .news-card div { padding: 15px; }
-        h3 { color: #333; margin-top: 0; }
         
-        /* Novo Rodapé com Informações */
+        .news-card { 
+            height: var(--altura-janelas);
+            min-width: 260px; 
+            scroll-snap-align: start; 
+            background: white; 
+            border-radius: 12px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+            text-decoration: none; 
+            color: black; 
+            border: 2px solid transparent; 
+            transition: border-color 0.2s; 
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .news-card:hover { border-color: #0056b3; }
+        .news-card img { width: 100%; height: 130px; object-fit: cover; background-color: #ddd; flex-shrink: 0; }
+        .news-card div { padding: 15px; flex-grow: 1; }
+        .news-card h4 { margin-top: 0; margin-bottom: 8px; color: #0056b3; font-size: 16px;}
+        .news-card p { margin: 0; font-size: 13px; color: #555; }
+        
+        /* Banner Sou Calouro */
+        .banner-calouro { 
+            height: var(--altura-janelas);
+            box-sizing: border-box;
+            display: flex; 
+            align-items: center; 
+            background-color: white; 
+            border-radius: 16px; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+            padding: 20px; 
+            text-decoration: none; 
+            color: black; 
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 2px solid transparent;
+        }
+        .banner-calouro:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); border-color: #0056b3; }
+        .banner-calouro img { 
+            width: 180px; 
+            height: 180px; /* Cresceu para acompanhar a nova altura */
+            border-radius: 12px; 
+            object-fit: cover; 
+            margin-right: 25px; 
+            flex-shrink: 0; 
+            border: 1px solid #eee;
+        }
+        .banner-text h4 { margin-top: 0; margin-bottom: 10px; color: #0056b3; font-size: 22px; }
+        .banner-text p { margin: 0; color: #555; line-height: 1.6; font-size: 15px;}
+
+        /* Oportunidades e Hubs */
+        .hubs-category { margin-top: 10px; margin-bottom: 5px; color: #004085; font-size: 18px; font-weight: bold; }
+        .hubs-grid { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; scroll-snap-type: x mandatory; margin-bottom: 10px; }
+        
+       .hub-card { 
+            height: var(--altura-janelas);
+            width: 220px; /* Agora é uma largura fixa, todos terão exatamente 220px */
+            flex-shrink: 0; /* Impede o cartão de encolher ou esticar */
+            box-sizing: border-box;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center;
+            background: white; 
+            border-radius: 10px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08); 
+            padding: 20px; 
+            text-decoration: none; 
+            color: #333; 
+            scroll-snap-align: start; 
+            border: 1px solid #ddd;
+            transition: border-color 0.2s;
+            text-align: center;
+        }
+        .hub-card:hover { border-color: #0056b3; background-color: #f8fafd; }
+        .hub-card img { width: 70px; height: 70px; border-radius: 12px; margin-bottom: 15px; object-fit: cover; background-color: #eee; }
+        .hub-card span { font-weight: bold; font-size: 16px; }
+
+        /* Rodapé e Chatbot */
         .site-footer { background-color: #333; color: white; padding: 40px 20px 20px; margin-top: 40px; }
         .footer-content { display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between; max-width: 900px; margin: 0 auto; }
         .footer-section { flex: 1; min-width: 200px; }
         .footer-section h4 { color: #ffc107; margin-top: 0; margin-bottom: 15px; font-size: 18px; }
         .footer-section p { font-size: 14px; line-height: 1.6; margin: 0; color: #ccc; }
-        .footer-bottom { text-align: center; margin-top: 30px; padding-top: 15px; border-top: 1px solid #55; font-size: 13px; color: #999; }
-
-        /* Botão do chatbot flutuante */
+        .footer-bottom { text-align: center; margin-top: 30px; padding-top: 15px; border-top: 1px solid #555; font-size: 13px; color: #999; }
+        
         .floating-btn { position: fixed; bottom: 20px; right: 20px; background-color: #0056b3; color: white; padding: 15px 25px; border-radius: 50px; text-decoration: none; font-size: 16px; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: 0.2s; z-index: 999; }
         .floating-btn:hover { background-color: #002752; }
+        
+        /* Ajuste responsivo para telas de celular */
+        @media (max-width: 600px) {
+            .banner-calouro { flex-direction: column; text-align: center; height: auto; }
+            .banner-calouro img { margin-right: 0; margin-bottom: 15px; width: 100%; height: 160px; }
+        }
     </style>
 </head>
 <body>
@@ -90,6 +158,11 @@
     </header>
 
     <div class="nav-wrapper">
+        
+        <a href="index.html" class="hat-logo">
+            <img src="chapeu.png" alt="">
+        </a>
+    
         <nav class="capsule-nav">
             <a href="index.html" class="active">Início</a>
             <a href="tutoriais.html">Tutoriais</a>
@@ -97,33 +170,19 @@
             <a href="calculadora.html">Calculadora</a>
         </nav>
     </div>
+    </div>
 
     <main class="content-area">
         
-        <!-- Nova Área: Sou Calouro -->
-        <section class="news-section">
-            <h3>Sou Calouro</h3>
-            <div class="carousel">
-                <!-- O link está com '#' pois ainda não é funcional -->
-                <a href="#" class="news-card">
-                    <img src="calouro.png" alt="Sou calouro" style="max-width: 100%; height: auto; object-fit: contain;">
-                    <div>
-                        <h4>Primeiros Passos no IC</h4>
-                        <p>Descubra tudo o que você precisa saber para começar sua jornada acadêmica com tranquilidade.</p>
-                    </div>
-                </a>
-            </div>
-        </section>
-
-        <!-- Área Antiga: Mural de Notícias -->
-        <section class="news-section">
-            <h3>Mural de Notícias</h3>
+        <!-- Área 1: Notícias e Avisos -->
+        <section>
+            <h3>Notícias e Avisos</h3>
             <div class="carousel">
                 <a href="https://site-oficial-do-ic.br" class="news-card" target="_blank">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcQEada5uJkQhYaFCpTQsNUVAW2FOGIJ15x8-prG0c42noVd4SGh7mPQkF&s=10" alt="Notícia 1">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcQEada5uJkQhYaFCpTQsNUVAW2FOGIJ15x8-prG0c42noVd4SGh7mPQkF&s=10" alt="Bem vindo">
                     <div>
                         <h4>Bem-vindo ao semestre!</h4>
-                        <p>Mensagem de boas-vindas e informações iniciais para os novos alunos do IC.</p>
+                        <p>Mensagem de boas-vindas e informações iniciais para os novos alunos.</p>
                     </div>
                 </a>
                 <a href="https://site-oficial-do-ic.br" class="news-card" target="_blank">
@@ -135,6 +194,56 @@
                 </a>
             </div>
         </section>
+
+        <!-- Área 2: Sou Calouro -->
+        <section>
+            <h3>Sou Calouro</h3>
+            <a href="#" class="banner-calouro">
+                <img src="calouro.png" alt="Sou Calouro">
+                <div class="banner-text">
+                    <h4>Primeiros Passos</h4>
+                    <p>Encontre aqui todos os guias, mapas e dicas essenciais para se orientar no instituto e na universidade. Tudo o que você precisa saber no seu primeiro período reunido em um só lugar.</p>
+                </div>
+            </a>
+        </section>
+
+        <!-- Área 3: Oportunidades e Hubs -->
+        <section>
+            <h3>Oportunidades e Hubs</h3>
+            
+            <h4 class="hubs-category">IC</h4>
+            <div class="hubs-grid">
+                <a href="#" class="hub-card">
+                    <img src="imagens oportunidades/extensao.png" alt="Ícone Projeto">
+                    <span>Projetos de Extensão</span>
+                </a>
+                <a href="#" class="hub-card">
+                    <img src="imagens oportunidades/lab.png" alt="Ícone Empresa">
+                    <span>Laboratórios</span>
+                </a>
+                <a href="#" class="hub-card">
+                    <img src="imagens oportunidades/monitoria.png" alt="Ícone Monitoria">
+                    <span>Monitoria</span>
+                </a>
+            </div>
+
+            <h4 class="hubs-category">UFAL</h4>
+            <div class="hubs-grid">
+                <a href="#" class="hub-card">
+                    <img src="imagens oportunidades/assistencia.png" alt="Ícone PROEST">
+                    <span>Assistência Estudantil</span>
+                </a>
+                <a href="#" class="hub-card">
+                    <img src="imagens oportunidades/biblioteca.png" alt="Ícone Biblioteca">
+                    <span>Sistema de Bibliotecas</span>
+                </a>
+                <a href="#" class="hub-card">
+                    <img src="imagens oportunidades/restaurante.png" alt="Ícone Restaurante">
+                    <span>Restaurante Universitário</span>
+                </a>
+            </div>
+        </section>
+
     </main>
 
     <footer class="site-footer">
