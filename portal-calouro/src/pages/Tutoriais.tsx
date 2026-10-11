@@ -1,5 +1,3 @@
-import React from 'react';
-
 function Tutoriais() {
   return (
     <div className="content-container">

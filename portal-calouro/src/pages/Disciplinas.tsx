@@ -1,5 +1,3 @@
-import React from 'react';
-
 function Disciplinas() {
   return (
     <div className="content-container">
