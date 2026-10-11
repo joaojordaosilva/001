@@ -1,0 +1,116 @@
+/* ===== ESTILOS GLOBAIS ===== */
+body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f9; display: flex; flex-direction: column; min-height: 100vh; }
+
+/* Cabeçalho / Barra de navegação */
+header { position: sticky; top: 0; z-index: 998; background-color: #004085; color: white; padding: 12px 40px; display: flex; align-items: center; justify-content: space-between; gap: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.25); }
+.logo img { height: 45px; width: auto; display: block; }
+
+/* Links da navegação */
+.nav-wrapper { display: flex; justify-content: center; padding: 20px 10px; position: sticky; top: 0; z-index: 998; }
+.capsule-nav { background-color: #004085; display: flex; gap: 6px; border-radius: 50px; padding: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); overflow-x: auto; max-width: 100%; }
+.capsule-nav a { color: white; padding: 10px 18px; text-decoration: none; text-align: center; font-weight: bold; border-radius: 50px; transition: 0.2s; white-space: nowrap; }
+.capsule-nav a:hover { background-color: #002752; }
+.capsule-nav a.active { background-color: #ffffff; color: #004085; }
+
+/* ===== BANNER INICIAL ===== */
+.viewport { width: 100%; height: 560px; overflow: hidden; background: radial-gradient(rgba(255,255,255,0.10) 1.2px, transparent 1.4px) 0 0 / 28px 28px, linear-gradient(115deg, #003a7d 0%, #0056b3 52%, #1a76d2 100%); }
+.stage { position: relative; width: 1440px; height: 560px; transform-origin: top left; font-family: 'DM Sans', sans-serif; color: #ffffff; }
+.content { position: absolute; left: 80px; top: 0; bottom: 0; width: 620px; display: flex; flex-direction: column; justify-content: center; gap: 28px; }
+.brand { display: flex; align-items: center; gap: 16px; }
+.brand__divider { width: 2px; height: 36px; background: rgba(255,255,255,0.55); }
+.brand__name { font-size: 30px; font-weight: 700; letter-spacing: 0.06em; }
+.title { margin: 0; font-family: 'Fraunces', serif; font-weight: 500; font-size: 66px; line-height: 1.04; letter-spacing: -0.01em; }
+.text { margin: 0; max-width: 520px; font-size: 19px; line-height: 1.55; color: rgba(255,255,255,0.94); }
+.actions { display: flex; gap: 14px; align-items: center; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 0 30px; background: #ffffff; color: #0056b3; font-weight: 700; font-size: 17px; border-radius: 999px; text-decoration: none; }
+.panels { position: absolute; right: 72px; top: 60px; width: 600px; height: 440px; }
+.panel { position: absolute; width: 190px; clip-path: polygon(0 14%, 100% 0, 100% 86%, 0 100%); }
+.panel--code { left: 0; top: 70px; height: 320px; background: #00264f; box-sizing: border-box; padding: 78px 22px 0 22px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.9; color: #9cc8f5; }
+.panel--code .kw   { color: #6fb0ff; }
+.panel--code .attr { padding-left: 14px; color: #ffffff; }
+.panel--code .fn   { padding-left: 14px; color: #9cc8f5; }
+.panel--cap { left: 204px; top: 0; height: 440px; background: linear-gradient(180deg, #e8f2fd 0%, #b5d4f6 100%); display: flex; align-items: center; justify-content: center; }
+.panel--cap svg { margin-top: 6px; }
+.panel--binary { left: 408px; top: 70px; height: 320px; background: #0a4a9a; box-sizing: border-box; padding: 70px 18px 0 18px; font-family: 'JetBrains Mono', monospace; font-size: 15px; line-height: 1.7; letter-spacing: 0.12em; color: rgba(255,255,255,0.55); overflow: hidden; }
+.panel--binary .hl { color: #ffffff; }
+
+/* ===== CONTEÚDO DA PÁGINA (HOME) ===== */
+main.content-area, .content-container { flex: 1; max-width: 1000px; margin: 0 auto; width: 100%; padding: 20px; box-sizing: border-box; }
+section { padding: 20px 0; }
+h3, h2 { color: #0056b3; margin-top: 0; margin-bottom: 15px; }
+h3 { text-transform: uppercase; font-size: 16px; letter-spacing: 1px; color: #333; }
+:root { --altura-janelas: 240px; }
+
+/* Carrossel de Notícias */
+.carousel { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 15px; scroll-snap-type: x mandatory; }
+.news-card { height: var(--altura-janelas); min-width: 260px; scroll-snap-align: start; background: white; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-decoration: none; color: black; border: 2px solid transparent; transition: border-color 0.2s; display: flex; flex-direction: column; overflow: hidden; }
+.news-card:hover { border-color: #0056b3; }
+.news-card img { width: 100%; height: 130px; object-fit: cover; background-color: #ddd; flex-shrink: 0; }
+.news-card div { padding: 15px; flex-grow: 1; }
+.news-card h4 { margin-top: 0; margin-bottom: 8px; color: #0056b3; font-size: 16px;}
+.news-card p { margin: 0; font-size: 13px; color: #555; }
+
+/* Oportunidades e Hubs */
+.hubs-category { margin-top: 10px; margin-bottom: 5px; color: #004085; font-size: 18px; font-weight: bold; }
+.hubs-grid { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; scroll-snap-type: x mandatory; margin-bottom: 10px; }
+.hub-card { height: var(--altura-janelas); width: 220px; flex-shrink: 0; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; background: white; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); padding: 20px; text-decoration: none; color: #333; scroll-snap-align: start; border: 1px solid #ddd; transition: border-color 0.2s; text-align: center; }
+.hub-card:hover { border-color: #0056b3; background-color: #f8fafd; }
+.hub-card img { width: 70px; height: 70px; border-radius: 12px; margin-bottom: 15px; object-fit: cover; background-color: #eee; }
+.hub-card span { font-weight: bold; font-size: 16px; }
+
+/* ===== PÁGINAS DE TUTORIAIS E DISCIPLINAS ===== */
+details { background-color: white; border-radius: 6px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); border: 1px solid #e0e0e0; overflow: hidden; }
+summary { padding: 15px; font-weight: bold; cursor: pointer; outline: none; user-select: none; background-color: #fff; color: #333; transition: background-color 0.2s; }
+summary:hover { background-color: #f1f7ff; }
+details.main-topic > summary { font-size: 18px; color: #0056b3; background-color: #f8fafd; }
+.tutorial-body { padding: 15px 20px; border-top: 1px solid #eee; background-color: #fafbfc; }
+.sub-topic { margin: 10px 0; border-left: 3px solid #0056b3; }
+.sub-topic summary { font-size: 15px; color: #222; padding: 10px 15px; }
+.sub-topic p, .sub-topic ol { margin: 0; padding: 10px 15px; font-size: 14px; line-height: 1.6; color: #555; }
+.tutorial-img { max-width: 100%; height: auto; border-radius: 5px; border: 1px solid #ccc; margin: 10px 0; display: block; }
+
+/* ===== PÁGINA DA CALCULADORA ===== */
+.card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); max-width: 500px; margin: 0 auto; }
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; font-weight: bold; margin-bottom: 5px; color: #333; }
+.form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; box-sizing: border-box; }
+.calc-action-btn { width: 100%; padding: 12px; background-color: #0056b3; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; margin-top: 10px; transition: 0.2s; }
+.calc-action-btn:hover { background-color: #004085; }
+.result-box { margin-top: 20px; padding: 15px; background-color: #e2eef9; border-left: 5px solid #0056b3; border-radius: 4px; display: block; }
+.result-box p { margin: 0; color: #004085; font-weight: bold; }
+
+/* ===== RODAPÉ E CHATBOT ===== */
+.site-footer { background-color: #333; color: white; padding: 40px 20px 20px; margin-top: auto; }
+.footer-content { display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between; max-width: 900px; margin: 0 auto; }
+.footer-section { flex: 1; min-width: 200px; }
+.footer-section h4 { color: #ffc107; margin-top: 0; margin-bottom: 15px; font-size: 18px; }
+.footer-section p { font-size: 14px; line-height: 1.6; margin: 0; color: #ccc; }
+.footer-bottom { text-align: center; margin-top: 30px; padding-top: 15px; border-top: 1px solid #555; font-size: 13px; color: #999; }
+
+.floating-btn { position: fixed; bottom: 20px; right: 20px; background-color: #0056b3; color: white; padding: 15px 25px; border-radius: 50px; text-decoration: none; font-size: 16px; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: 0.2s; z-index: 999; }
+.floating-btn:hover { background-color: #002752; }
+
+/* ===== AJUSTES RESPONSIVOS ===== */
+@media (max-width: 900px) {
+    .viewport { height: auto; }
+    .stage { width: auto; height: auto; padding: 40px 24px 40px; box-sizing: border-box; transform: none !important; margin-left: 0 !important; }
+    .content { position: static; width: auto; gap: 22px; }
+    .brand__name { font-size: 26px; }
+    .title { font-size: 40px; }
+    .text { max-width: none; font-size: 17px; }
+    .btn { min-height: 48px; font-size: 16px; }
+    .panels { position: relative; right: auto; top: auto; width: 100%; height: 240px; margin-top: 36px; }
+    .panel { width: 31%; }
+    .panel--code { left: 0; top: 34px; height: 172px; padding: 44px 10px 0 10px; font-size: 8.5px; line-height: 1.8; }
+    .panel--code .attr, .panel--code .fn { padding-left: 8px; }
+    .panel--cap { left: 34.5%; top: 0; height: 240px; }
+    .panel--cap svg { width: 68px; height: auto; margin-top: 4px; }
+    .panel--binary { left: 69%; top: 34px; height: 172px; padding: 40px 8px 0 8px; font-size: 8px; line-height: 1.8; letter-spacing: 0.08em; }
+}
+
+@media (max-width: 600px) {
+    header { flex-direction: column; padding: 12px 10px; gap: 10px; }
+    .capsule-nav a { padding: 8px 14px; font-size: 14px; }
+    .title { font-size: 34px; }
+    .floating-btn { padding: 12px 18px; font-size: 15px; bottom: 16px; right: 16px; }
+}
