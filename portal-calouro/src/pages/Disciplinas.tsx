@@ -2,7 +2,7 @@
 import { useState, useMemo } from 'react';
 
 /* =====================================================================
-   DADOS DOS CURSOS (Extraídos do seu arquivo original)
+   DADOS DOS CURSOS
    ===================================================================== */
 const CC_TXT = `1|COMP359|Programação 1|72|O
 1|COMP360|Lógica para Computação|72|O
@@ -318,6 +318,41 @@ Engenharia de Requisitos
 Introdução a Libras
 Língua Inglesa Instrumental 1`;
 
+/* =====================================================================
+   EQUIVALÊNCIAS EXTRAÍDAS DOS PPCS
+   ===================================================================== */
+const EQUIVALENCIAS = {
+  "Programação 1": "CCOM002",
+  "Lógica para Computação": "CCOM014",
+  "Computação, Sociedade e Ética": "CCOM047, CCOM046",
+  "Matemática Discreta": "CCOM010",
+  "Cálculo Diferencial e Integral": "CCOM004, CCOM011",
+  "Estrutura de Dados": "CCOM009",
+  "Banco de Dados": "CCOM021",
+  "Organização e Arquitetura de Computadores": "CCOM026",
+  "Geometria Analítica": "CCOM005",
+  "Redes de Computadores": "CCOM032",
+  "Teoria dos Grafos": "CCOM030, CCOM039",
+  "Probabilidade e Estatística": "CCOM022",
+  "Álgebra Linear": "CCOM012",
+  "Programação 2": "CCOM016",
+  "Programação 3": "CCOM007, CCOM006",
+  "Projeto e Análise de Algoritmos": "CCOM020",
+  "Teoria da Computação": "CCOM008, CCOM015",
+  "Sistemas Operacionais": "CCOM034",
+  "Compiladores": "CCOM035",
+  "Inteligência Artificial": "CCOM033",
+  "Computação Gráfica": "CCOM041",
+  "Projeto e Desenvolvimento de Sistemas": "CCOM003, CCOM023, CCOM028, CCOM031, CCOM036, CCOM042",
+  "Metodologia de Pesquisa e Trabalho Individual": "CCOM001, CCOM013",
+  "Noções de Direito": "CCOM045",
+  "Cálculo 3": "CCOM025",
+  "Conceitos de Linguagem de Programação": "CCOM027",
+  "Sistemas Distribuídos": "CCOM044",
+  "Interação Homem-Máquina": "CCOM043, CCOM046",
+  "Gerência de Projeto": "CCOM048"
+};
+
 /* ---------- Montagem dos cursos ---------- */
 const TIPOS = { O: "Obrigatória", E: "Eletiva", X: "Extensão", N: "Ênfase", S: "Estágio" };
 const ORD_TIPO = { O: 0, S: 1, X: 2, N: 3, E: 4 };
@@ -627,7 +662,7 @@ export default function Disciplinas() {
               <div className="tbl-wrap">
                   <table>
                       <thead>
-                        <tr><th>Período</th><th>Código</th><th>Disciplina</th><th>CH</th><th>Tipo</th><th>Pré-requisitos</th></tr>
+                        <tr><th>Período</th><th>Código</th><th>Disciplina</th><th>CH</th><th>Tipo</th><th>Equivalências</th></tr>
                       </thead>
                       <tbody>
                         {linhasTabela.length === 0 ? (
@@ -642,7 +677,7 @@ export default function Disciplinas() {
                                 <td>{d.nome} {ef && <small>{ef}</small>}</td>
                                 <td>{chTxt(curso, d)}</td>
                                 <td><span className={"tag" + (d.tipo === "O" ? " o" : "")}>{TIPOS[d.tipo]}</span></td>
-                                <td>{preTxt(d)} {d.co.length > 0 && <small>Correquisito: {d.co.join("; ")}</small>}</td>
+                                <td>{EQUIVALENCIAS[d.nome] || "-"}</td>
                               </tr>
                             );
                           })
