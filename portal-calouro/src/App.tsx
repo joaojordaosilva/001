@@ -25,19 +25,20 @@ function App() {
           {/* Se o logótipo estiver solto na pasta public, o caminho é apenas /logo.png */}
           <img src="/logo.png" alt="Logo GIC" />
         </a>
-      </header>
 
-      <div className="nav-wrapper">
+        {/* A navegação agora está DENTRO do header, na mesma linha da logo */}
         <nav className="capsule-nav">
           <a href="#" className={paginaAtiva === 'inicio' ? 'active' : ''} onClick={(e) => { e.preventDefault(); setPaginaAtiva('inicio'); }}>Início</a>
           <a href="#" className={paginaAtiva === 'tutoriais' ? 'active' : ''} onClick={(e) => { e.preventDefault(); setPaginaAtiva('tutoriais'); }}>Tutoriais</a>
           <a href="#" className={paginaAtiva === 'disciplinas' ? 'active' : ''} onClick={(e) => { e.preventDefault(); setPaginaAtiva('disciplinas'); }}>Disciplinas</a>
           <a href="#" className={paginaAtiva === 'calculadora' ? 'active' : ''} onClick={(e) => { e.preventDefault(); setPaginaAtiva('calculadora'); }}>Calculadora</a>
         </nav>
-      </div>
+      </header>
 
       {/* Retirámos a tag <main> que limitava a largura, deixando a página livre */}
-      {renderizarPagina()}
+      <div className="main-content">
+        {renderizarPagina()}
+      </div>
 
       <footer className="site-footer">
         <div className="footer-content">

@@ -102,15 +102,15 @@ function Home() {
           <h4 className="hubs-category">IC</h4>
           <div className="hubs-grid">
             <a href="#" className="hub-card">
-              <img src="/extensao.png" alt="Ícone Projeto" />
+              <img src="imagens oportunidades/extensao.png" alt="Ícone Projeto" />
               <span>Projetos de Extensão</span>
             </a>
             <a href="#" className="hub-card">
-              <img src="/lab.png" alt="Ícone Empresa" />
+              <img src="imagens oportunidades/lab.png" alt="Ícone Empresa" />
               <span>Laboratórios</span>
             </a>
             <a href="#" className="hub-card">
-              <img src="/monitoria.png" alt="Ícone Monitoria" />
+              <img src="imagens oportunidades/monitoria.png" alt="Ícone Monitoria" />
               <span>Monitoria</span>
             </a>
           </div>
@@ -118,15 +118,15 @@ function Home() {
           <h4 className="hubs-category">UFAL</h4>
           <div className="hubs-grid">
             <a href="#" className="hub-card">
-              <img src="/assistencia.png" alt="Ícone PROEST" />
+              <img src="imagens oportunidades/assistencia.png" alt="Ícone PROEST" />
               <span>Assistência Estudantil</span>
             </a>
             <a href="#" className="hub-card">
-              <img src="/biblioteca.png" alt="Ícone Biblioteca" />
+              <img src="imagens oportunidades/biblioteca.png" alt="Ícone Biblioteca" />
               <span>Sistema de Bibliotecas</span>
             </a>
             <a href="#" className="hub-card">
-              <img src="/restaurante.png" alt="Ícone Restaurante" />
+              <img src="imagens oportunidades/restaurante.png" alt="Ícone Restaurante" />
               <span>Restaurante Universitário</span>
             </a>
           </div>

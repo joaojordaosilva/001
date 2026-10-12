@@ -10,7 +10,7 @@ function Disciplinas() {
         <summary>📘 PROJETO E ANÁLISE DE ALGORITMOS</summary>
         <div className="tutorial-body">
           <p>Abaixo encontra-se o mapeamento estrutural e o roteiro para a disciplina de Projeto e Análise de Algoritmos:</p>
-          <img src="img/roadmap.png" alt="Roadmap PAA" className="tutorial-img" />
+          <img src="roadmap.png" alt="Roadmap PAA" className="tutorial-img" />
         </div>
       </details>
     </div>
