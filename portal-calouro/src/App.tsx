@@ -1,5 +1,5 @@
 import { useState } from 'react';
-
+import Oportunidades from './pages/Oportunidades';
 import Home from './pages/Home';
 import Tutoriais from './pages/Tutoriais';
 import Disciplinas from './pages/Disciplinas';
@@ -11,6 +11,7 @@ function App() {
   const renderizarPagina = () => {
     switch (paginaAtiva) {
       case 'inicio': return <Home />;
+      case 'oportunidades': return <Oportunidades />;
       case 'tutoriais': return <Tutoriais />;
       case 'disciplinas': return <Disciplinas />;
       case 'calculadora': return <Calculadora />;
@@ -29,6 +30,7 @@ function App() {
         {/* A navegação agora está DENTRO do header, na mesma linha da logo */}
         <nav className="capsule-nav">
           <a href="#" className={paginaAtiva === 'inicio' ? 'active' : ''} onClick={(e) => { e.preventDefault(); setPaginaAtiva('inicio'); }}>Início</a>
+          <a href="#" className={paginaAtiva === 'oportunidades' ? 'active' : ''} onClick={(e) => { e.preventDefault(); setPaginaAtiva('oportunidades'); }}>Oportunidades</a>
           <a href="#" className={paginaAtiva === 'tutoriais' ? 'active' : ''} onClick={(e) => { e.preventDefault(); setPaginaAtiva('tutoriais'); }}>Tutoriais</a>
           <a href="#" className={paginaAtiva === 'disciplinas' ? 'active' : ''} onClick={(e) => { e.preventDefault(); setPaginaAtiva('disciplinas'); }}>Disciplinas</a>
           <a href="#" className={paginaAtiva === 'calculadora' ? 'active' : ''} onClick={(e) => { e.preventDefault(); setPaginaAtiva('calculadora'); }}>Calculadora</a>

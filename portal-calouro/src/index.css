@@ -223,3 +223,111 @@ details.main-topic > summary { font-size: 18px; color: #0056b3; background-color
     .page-disciplinas .stat b { font-size: 15px; }
     .page-disciplinas .course-pick button { width: 100%; }
 }
+
+/* =========================================
+   ESTILOS EXCLUSIVOS: PÁGINA DE OPORTUNIDADES
+   ========================================= */
+
+.page-oportunidades {
+    --blue: #0056b3;
+    --blue-dark: #004085;
+    --blue-deep: #003a7d;
+    --mu: #5a6578;
+    --ln: #d9dfea;
+    scroll-behavior: smooth;
+}
+
+.page-oportunidades .page-hero {
+    color: #fff;
+    padding: 56px 0 44px;
+    background: radial-gradient(rgba(255,255,255,0.10) 1.2px, transparent 1.4px) 0 0 / 28px 28px, linear-gradient(115deg, var(--blue-deep) 0%, var(--blue) 55%, #1a76d2 100%);
+}
+.page-oportunidades .page-hero .wrap { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+.page-oportunidades .page-hero h1 { margin: 0 0 10px; font-size: clamp(2rem, 6vw, 3.2rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.05; }
+.page-oportunidades .page-hero p { margin: 0 0 24px; max-width: 62ch; font-size: 1.05rem; line-height: 1.6; color: rgba(255,255,255,0.94); }
+.page-oportunidades .jump { display: flex; flex-wrap: wrap; gap: 10px; }
+.page-oportunidades .jump a {
+    display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px;
+    border: 2px solid rgba(255,255,255,0.8); color: #fff; text-decoration: none; font-weight: 700; font-size: 14px;
+    transition: background .15s, color .15s; cursor: pointer;
+}
+.page-oportunidades .jump a:hover { background: #fff; color: var(--blue); }
+
+.page-oportunidades .oport-main { flex: 1; width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 20px 20px; }
+.page-oportunidades .group { padding-top: 26px; }
+.page-oportunidades .group > h2 { margin: 18px 0 4px; font-size: clamp(1.4rem, 3.4vw, 1.9rem); font-weight: 800; color: var(--blue-dark); letter-spacing: -0.01em; }
+.page-oportunidades .group > p { margin: 0 0 6px; color: var(--mu); font-size: 15px; line-height: 1.6; }
+
+/* Pastas */
+.page-oportunidades .folder { 
+    position: relative; 
+    margin-top: 26px; 
+    scroll-margin-top: 90px; 
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    overflow: visible;
+}
+.page-oportunidades .folder::before {
+    content: ""; position: absolute; left: 22px; top: -12px; width: 96px; height: 16px;
+    background: #c9d6ea; border-radius: 10px 10px 0 0; transition: background .15s;
+}
+.page-oportunidades .folder[open]::before { background: var(--blue); }
+.page-oportunidades .folder > summary {
+    list-style: none; cursor: pointer; display: flex; align-items: center; gap: 16px;
+    background: #fff; border: 1px solid var(--ln); border-radius: 14px; padding: 16px 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.06); transition: border-color .15s;
+}
+.page-oportunidades .folder > summary::-webkit-details-marker { display: none; }
+.page-oportunidades .folder > summary:hover { border-color: var(--blue); }
+.page-oportunidades .folder[open] > summary { border-color: var(--blue); border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+.page-oportunidades .folder .ico { width: 44px; height: 36px; flex: none; color: var(--blue); }
+.page-oportunidades .folder .ttl { flex: 1; min-width: 0; }
+.page-oportunidades .folder .ttl b { display: block; font-size: 18px; font-weight: 800; color: var(--blue-dark); }
+.page-oportunidades .folder .ttl span { display: block; font-size: 13px; color: var(--mu); line-height: 1.45; margin-top: 2px; }
+.page-oportunidades .folder .chev { width: 18px; height: 18px; flex: none; color: var(--mu); transition: transform .2s; }
+.page-oportunidades .folder[open] .chev { transform: rotate(180deg); }
+
+.page-oportunidades .wins {
+    display: grid; gap: 18px; padding: 22px;
+    background: #eaf2fc; border: 1px solid var(--blue); border-top: 0; border-radius: 0 0 14px 14px;
+}
+
+/* Janelas */
+.page-oportunidades .win {
+    display: flex; align-items: center; gap: 28px;
+    background: #fff; border: 1px solid var(--ln); border-radius: 18px; padding: 18px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+.page-oportunidades .win:nth-child(even) { flex-direction: row-reverse; }
+.page-oportunidades .win__media {
+    flex: 0 0 38%; aspect-ratio: 4 / 3; border-radius: 14px; overflow: hidden;
+    background: linear-gradient(135deg, #dcebfb, #b5d4f6);
+    display: flex; align-items: center; justify-content: center;
+}
+.page-oportunidades .win__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.page-oportunidades .ph { display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--blue); font-size: 13px; font-weight: 600; }
+.page-oportunidades .ph svg { width: 54px; height: 54px; }
+.page-oportunidades .win__body { flex: 1; min-width: 0; padding: 4px 6px; }
+.page-oportunidades .win__body h3 { margin: 0 0 8px; font-size: 20px; font-weight: 800; color: var(--blue-dark); line-height: 1.25; }
+.page-oportunidades .win__body p { margin: 0 0 16px; font-size: 15px; line-height: 1.65; color: var(--mu); }
+.page-oportunidades .btn-more {
+    display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 0 26px;
+    background: var(--blue); color: #fff; border-radius: 999px; font: 700 15px 'Montserrat', Arial, sans-serif;
+    text-decoration: none; transition: transform .15s, box-shadow .15s, background .15s; cursor: pointer; border: none;
+}
+.page-oportunidades .btn-more:hover { background: var(--blue-dark); transform: translateY(-2px); box-shadow: 0 8px 18px rgba(0,0,0,0.2); }
+
+@media (max-width: 760px) {
+    .page-oportunidades .win, .page-oportunidades .win:nth-child(even) { flex-direction: column; align-items: stretch; gap: 16px; }
+    .page-oportunidades .win__media { flex: none; width: 100%; }
+    .page-oportunidades .win__body { padding: 0 4px 4px; }
+    .page-oportunidades .wins { padding: 14px; }
+    .page-oportunidades .folder > summary { padding: 14px; gap: 12px; }
+    .page-oportunidades .folder .ico { width: 36px; height: 30px; }
+}
+
+@media (max-width: 600px) {
+    .page-oportunidades .page-hero { padding: 40px 0 32px; }
+    .page-oportunidades .folder { scroll-margin-top: 150px; }
+}
