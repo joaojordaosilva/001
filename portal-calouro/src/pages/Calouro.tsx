@@ -1,9 +1,37 @@
 import { useEffect } from 'react';
 
 /* =====================================================================
+   MOLDES DO TYPESCRIPT (Corrige o erro do Netlify)
+   ===================================================================== */
+interface StatData {
+  n: string;
+  d: string;
+}
+
+interface CardData {
+  t?: string;
+  p?: string;
+  p2?: string;
+  li?: string[];
+  link?: string;
+  wide?: boolean;
+  tip?: string;
+  code?: string;
+  stats?: StatData[];
+}
+
+interface SecaoData {
+  id: string;
+  icone: string;
+  nome: string;
+  intro: string;
+  cards: CardData[];
+}
+
+/* =====================================================================
    DADOS DA PÁGINA DO CALOURO
    ===================================================================== */
-const SECOES = [
+const SECOES: SecaoData[] = [
   {
     id: "sistemas", icone: "🖥️", nome: "Sistemas e burocracia",
     intro: "SIGAA, DRCA e NTI: onde resolver cada coisa logo nas primeiras semanas.",
