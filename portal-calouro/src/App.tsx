@@ -4,18 +4,23 @@ import Home from './pages/Home';
 import Tutoriais from './pages/Tutoriais';
 import Disciplinas from './pages/Disciplinas';
 import Calculadora from './pages/Calculadora';
+import Calouro from './pages/Calouro';
 
 function App() {
   const [paginaAtiva, setPaginaAtiva] = useState('inicio');
 
   const renderizarPagina = () => {
     switch (paginaAtiva) {
-      case 'inicio': return <Home />;
+      // 1. Passamos a função setPaginaAtiva para a Home
+      case 'inicio': return <Home setPaginaAtiva={setPaginaAtiva} />;
+      // 2. Adicionámos a página oculta do Calouro
+      case 'calouro': return <Calouro />;
       case 'oportunidades': return <Oportunidades />;
       case 'tutoriais': return <Tutoriais />;
       case 'disciplinas': return <Disciplinas />;
       case 'calculadora': return <Calculadora />;
-      default: return <Home />;
+      // 3. Atualizámos a página por defeito
+      default: return <Home setPaginaAtiva={setPaginaAtiva} />;
     }
   };
 

@@ -333,3 +333,101 @@ details.main-topic > summary { font-size: 18px; color: #0056b3; background-color
     .page-oportunidades .folder > summary { padding: 14px; gap: 12px; }
     .page-oportunidades .folder .ico { width: 36px; height: 30px; }
 }
+
+/* =========================================
+   ESTILOS EXCLUSIVOS: PÁGINA DO CALOURO
+   ========================================= */
+
+.page-calouro {
+    --blue: #0056b3;
+    --blue-dark: #004085;
+    --blue-deep: #003a7d;
+    --ink: #1d2b44;
+    --mu: #5a6578;
+    --ln: #d9dfea;
+    --amber: #e0a82e;
+    --amber-bg: #fff7e0;
+    scroll-behavior: smooth;
+}
+
+.page-calouro .page-hero {
+    color: #fff; padding: 56px 0 44px;
+    background: radial-gradient(rgba(255,255,255,0.10) 1.2px, transparent 1.4px) 0 0 / 28px 28px, linear-gradient(115deg, var(--blue-deep) 0%, var(--blue) 55%, #1a76d2 100%);
+}
+.page-calouro .page-hero .wrap { max-width: 1100px; margin: 0 auto; padding: 0 20px; box-sizing: border-box; }
+.page-calouro .page-hero h1 { margin: 0 0 10px; font-size: clamp(2rem, 6vw, 3.2rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.05; }
+.page-calouro .page-hero p { margin: 0 0 24px; max-width: 62ch; font-size: 1.05rem; line-height: 1.6; color: rgba(255,255,255,0.94); }
+.page-calouro .jump { display: flex; flex-wrap: wrap; gap: 10px; }
+.page-calouro .jump a {
+    display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px;
+    border: 2px solid rgba(255,255,255,0.8); color: #fff; text-decoration: none; font-weight: 700; font-size: 14px;
+    transition: background .15s, color .15s; cursor: pointer;
+}
+.page-calouro .jump a:hover { background: #fff; color: var(--blue); }
+
+.page-calouro .calouro-main { flex: 1; width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 20px 20px; box-sizing: border-box; }
+
+.page-calouro .sec { padding-top: 40px; scroll-margin-top: 90px; }
+.page-calouro .sec__head { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+.page-calouro .sec__ico { width: 44px; height: 44px; flex: none; border-radius: 12px; background: var(--blue); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.page-calouro .sec h2 { margin: 0; font-size: clamp(1.35rem, 3.4vw, 1.8rem); font-weight: 800; color: var(--blue-dark); letter-spacing: -0.01em; line-height: 1.15; }
+.page-calouro .sec__intro { margin: 8px 0 0; color: var(--mu); font-size: 15px; line-height: 1.6; max-width: 75ch; }
+
+.page-calouro .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 20px; width: 100%; }
+
+.page-calouro .card {
+    display: flex; flex-direction: column; background: #fff; border: 1px solid var(--ln); border-radius: 18px;
+    padding: 22px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); color: var(--ink);
+    
+    /* 🔴 AQUI ESTÁ A CORREÇÃO: Força o cartão a ocupar o espaço certo e anula as regras da calculadora */
+    max-width: none !important; 
+    margin: 0 !important; 
+    height: auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.page-calouro .card.wide { grid-column: 1 / -1; }
+
+.page-calouro .card h3 { 
+    margin: 0 0 8px; font-size: 18px; font-weight: 800; color: var(--blue-dark); line-height: 1.3; 
+    /* 🔴 AQUI ESTÁ A CORREÇÃO: Remove as letras maiúsculas forçadas */
+    text-transform: none; 
+}
+.page-calouro .card p { margin: 0 0 12px; font-size: 15px; line-height: 1.65; color: var(--mu); }
+.page-calouro .card ul { margin: 0 0 14px; padding-left: 20px; color: var(--mu); font-size: 15px; line-height: 1.6; }
+.page-calouro .card li { margin-bottom: 6px; }
+.page-calouro .card li b, .page-calouro .card p b { color: var(--ink); }
+.page-calouro .card .spacer { flex: 1; }
+.page-calouro .card .btn-more { align-self: flex-start; margin-top: 4px; }
+
+.page-calouro .btn-more {
+    display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 0 26px;
+    background: var(--blue); color: #fff; border-radius: 999px; font: 700 15px 'Montserrat', Arial, sans-serif;
+    text-decoration: none; transition: transform .15s, box-shadow .15s, background .15s; cursor: pointer; border: none;
+}
+.page-calouro .btn-more:hover { background: var(--blue-dark); transform: translateY(-2px); box-shadow: 0 8px 18px rgba(0,0,0,0.2); }
+
+/* Números de destaque */
+.page-calouro .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 4px 0 16px; }
+.page-calouro .stat { background: #eaf2fc; border: 1px solid #c9d6ea; border-radius: 14px; padding: 14px 12px; text-align: center; }
+.page-calouro .stat b { display: block; font-size: 26px; font-weight: 800; color: var(--blue); line-height: 1.1; }
+.page-calouro .stat span { display: block; margin-top: 4px; font-size: 12.5px; line-height: 1.35; color: var(--mu); font-weight: 600; }
+
+/* Dica de Veterano */
+.page-calouro .tip { display: flex; gap: 12px; background: var(--amber-bg); border: 1px solid #f0d58a; border-left: 5px solid var(--amber); border-radius: 12px; padding: 14px 16px; margin: 0 0 14px; font-size: 14.5px; line-height: 1.6; color: #5b4a12; }
+.page-calouro .tip .em { font-size: 20px; line-height: 1.3; flex: none; }
+.page-calouro .tip b { color: #3f3208; }
+
+.page-calouro code { font-family: Consolas, 'Courier New', monospace; background: #eef2f8; border-radius: 6px; padding: 2px 6px; font-size: 13.5px; color: var(--ink); word-wrap: break-word; }
+.page-calouro .code { display: block; background: #0f1f38; color: #cfe3ff; border-radius: 10px; padding: 12px 14px; margin: 0 0 14px; font-family: Consolas, 'Courier New', monospace; font-size: 14px; overflow-x: auto; white-space: pre; }
+
+@media (max-width: 760px) {
+    .page-calouro .grid { grid-template-columns: 1fr; width: 100%; }
+    .page-calouro .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .page-calouro .card { padding: 18px; }
+}
+
+@media (max-width: 600px) {
+    .page-calouro .sec { scroll-margin-top: 150px; }
+}

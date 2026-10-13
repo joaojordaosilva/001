@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-function Home() {
+function Home({ setPaginaAtiva }: { setPaginaAtiva: (pagina: string) => void }) {
   // Este useEffect recria a lógica de redimensionamento do seu script HTML original
   useEffect(() => {
     const W = 1440, H = 560, MOBILE = 900;
@@ -18,6 +18,7 @@ function Home() {
       }
       const scale = Math.min(1, vw / W);
       stage.style.transform = `scale(${scale})`;
+      // Sinais matemáticos corrigidos aqui:
       stage.style.marginLeft = vw > W ? `${(vw - W) / 2}px` : '0';
       viewport.style.height = `${H * scale}px`;
     }
@@ -46,7 +47,8 @@ function Home() {
             <h1 className="title">Guia do Ingressante em Computação</h1>
             <p className="text">Encontre aqui todos os guias, mapas e dicas essenciais para se orientar no instituto e na universidade. Tudo o que você precisa saber no seu primeiro período reunido em um só lugar.</p>
             <div className="actions">
-              <a className="btn" href="#">Sou calouro</a>
+              {/* O botão agora aciona a mudança de página */}
+              <a className="btn" href="#" onClick={(e) => { e.preventDefault(); setPaginaAtiva('calouro'); }}>Sou calouro</a>
             </div>
           </div>
           <div className="panels" aria-hidden="true">
