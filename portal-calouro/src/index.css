@@ -236,6 +236,27 @@ details.main-topic > summary { font-size: 18px; color: #0056b3; background-color
     .page-disciplinas .summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .page-disciplinas .stat b { font-size: 15px; }
     .page-disciplinas .course-pick button { width: 100%; }
+
+
+    /* =========================================
+   ESTILOS DO SIMULADOR E CHECKBOXES
+   ========================================= */
+
+/* Pinta a caixa do fluxo de verde quando concluída */
+.page-disciplinas .nd.concluida { background-color: #e8f5e9 !important; border-color: #2e7d32 !important; color: #1b5e20 !important; }
+.page-disciplinas .nd.concluida small { color: #2e7d32 !important; }
+
+/* Botão de download do PDF com o estilo do site */
+.page-disciplinas .btn-simulador {
+    display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 26px;
+    background: var(--blue); color: #fff; border-radius: 999px; font: 700 15px 'Montserrat', Arial, sans-serif;
+    text-decoration: none; transition: transform .15s, box-shadow .15s, background .15s; cursor: pointer; border: none;
+}
+.page-disciplinas .btn-simulador:hover { background: var(--blue-dark); transform: translateY(-2px); box-shadow: 0 8px 18px rgba(0,0,0,0.2); }
+
+/* Caixa de seleção (Checkbox) na tabela */
+.page-disciplinas .chk-concluida { width: 20px; height: 20px; cursor: pointer; accent-color: #2e7d32; }
+.page-disciplinas .tr-concluida td { background-color: #f1f8e9; }
 }
 
 /* =========================================

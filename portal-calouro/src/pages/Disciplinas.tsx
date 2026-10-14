@@ -1,5 +1,7 @@
 // @ts-nocheck
 import { useState, useMemo } from 'react';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 /* =====================================================================
    DADOS DOS CURSOS
@@ -318,9 +320,6 @@ Engenharia de Requisitos
 Introdução a Libras
 Língua Inglesa Instrumental 1`;
 
-/* =====================================================================
-   EQUIVALÊNCIAS EXTRAÍDAS DOS PPCS
-   ===================================================================== */
 const EQUIVALENCIAS = {
   "Programação 1": "CCOM002",
   "Lógica para Computação": "CCOM014",
@@ -353,7 +352,6 @@ const EQUIVALENCIAS = {
   "Gerência de Projeto": "CCOM048"
 };
 
-/* ---------- Montagem dos cursos ---------- */
 const TIPOS = { O: "Obrigatória", E: "Eletiva", X: "Extensão", N: "Ênfase", S: "Estágio" };
 const ORD_TIPO = { O: 0, S: 1, X: 2, N: 3, E: 4 };
 
@@ -427,7 +425,6 @@ const CURSOS = {
   }
 };
 
-/* ---------- Utilidades ---------- */
 const norm = s => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 const perKey = p => typeof p === "number" ? p : p === "N" ? 90 : 95;
 const perLabel = p => typeof p === "number" ? p + "º" : p === "N" ? "Ênfase" : "Catálogo";
@@ -448,19 +445,17 @@ function preTxt(d) {
 
 const reach = (g, n, s = new Set()) => { (g[n] || []).forEach(x => { if (!s.has(x)) { s.add(x); reach(g, x, s); } }); return s; };
 
-/* =====================================================================
-   COMPONENTE REACT 
-   ===================================================================== */
 export default function Disciplinas() {
   const [cid, setCid] = useState('cc');
   const [sel, setSel] = useState(null);
   const [fp, setFp] = useState('all');
   const [ft, setFt] = useState('all');
   const [fq, setFq] = useState('');
+  
+  const [concluidas, setConcluidas] = useState(new Set());
 
   const curso = CURSOS[cid];
 
-  // Cálculo de Grafos
   const { PRE, SUC, flowDisc, byPeriodo } = useMemo(() => {
     const flow = curso.disc.filter(d => typeof d.per === "number");
     const names = new Set(flow.map(d => d.nome));
@@ -476,14 +471,73 @@ export default function Disciplinas() {
     return { PRE: pre, SUC: suc, flowDisc: flow, byPeriodo: byPer };
   }, [cid]);
 
-  // Cálculo de seleção (Pré-requisitos e liberação)
+  const { liberadas, bloqueadas } = useMemo(() => {
+    const lib = [];
+    const bloq = [];
+    
+    curso.disc.forEach(d => {
+      if (concluidas.has(d.nome)) return;
+      if (d.tipo === 'E' || d.tipo === 'X' || d.tipo === 'N' || d.tipo === 'S') return;
+
+      const preReqs = PRE[d.nome] || [];
+      const temTudo = preReqs.every(pr => concluidas.has(pr));
+
+      if (temTudo) lib.push(d);
+      else bloq.push(d);
+    });
+    
+    lib.sort((a, b) => perKey(a.per) - perKey(b.per));
+    bloq.sort((a, b) => perKey(a.per) - perKey(b.per));
+    
+    return { liberadas: lib, bloqueadas: bloq };
+  }, [curso, concluidas, PRE]);
+
+  const toggleConcluida = (nome) => {
+    setConcluidas(prev => {
+      const novoSet = new Set(prev);
+      if (novoSet.has(nome)) novoSet.delete(nome);
+      else novoSet.add(nome);
+      return novoSet;
+    });
+  };
+
+  const baixarRelatorioPDF = () => {
+    const doc = new jsPDF();
+    
+    doc.setFontSize(18);
+    doc.setTextColor(0, 86, 179);
+    doc.text(`Relatório de Matrícula - ${curso.nome}`, 14, 20);
+
+    doc.setFontSize(11);
+    doc.setTextColor(51, 51, 51);
+    doc.text(`Disciplinas Concluídas: ${concluidas.size}`, 14, 30);
+
+    autoTable(doc, {
+      startY: 35,
+      head: [['Período', 'Código', 'Disciplinas Liberadas (Pode cursar no próximo semestre)']],
+      body: liberadas.map(d => [`${d.per}º`, d.cod !== '—' ? d.cod : '', d.nome]),
+      headStyles: { fillColor: [46, 125, 50] } 
+    });
+
+    autoTable(doc, {
+      startY: doc.lastAutoTable.finalY + 15,
+      head: [['Período', 'Código', 'Disciplinas Bloqueadas', 'Pré-requisitos em falta']],
+      body: bloqueadas.map(d => {
+        const faltam = (PRE[d.nome] || []).filter(p => !concluidas.has(p));
+        return [`${d.per}º`, d.cod !== '—' ? d.cod : '', d.nome, faltam.join(', ')];
+      }),
+      headStyles: { fillColor: [183, 28, 28] } 
+    });
+
+    doc.save(`GIC_Simulador_Matricula_${cid.toUpperCase()}.pdf`);
+  };
+
   const { chain, up, dn } = useMemo(() => {
     const upSet = sel ? reach(PRE, sel) : new Set();
     const dnSet = sel ? reach(SUC, sel) : new Set();
     return { up: upSet, dn: dnSet, chain: new Set([...upSet, ...dnSet, sel]) };
   }, [sel, PRE, SUC]);
 
-  // Ações de clique
   const pick = (d) => {
     const key = d.tipo === "E" ? null : d.nome;
     setSel(prev => prev === key && key ? null : key);
@@ -494,32 +548,21 @@ export default function Disciplinas() {
     const d = flowDisc.find(x => x.nome === sel);
     if (!d) return null;
     const head = [d.cod !== "—" ? d.cod + " · " : "", d.ch ? d.ch + " " + curso.un + " · " : "", TIPOS[d.tipo]].join("");
-    
-    if (d.tipo === "E") {
-      return <><br/>Eletiva: você escolhe a disciplina no catálogo de eletivas.</>;
-    }
+    if (d.tipo === "E") return <><br/>Eletiva: você escolhe a disciplina no catálogo de eletivas.</>;
     
     let txt = "";
     if (d.pre === null) txt += "O PPC não informa pré-requisitos para esta disciplina. ";
     else txt += "Pré-requisitos: " + preTxt(d) + ". ";
-    
     if (d.co.length) txt += "Correquisito: " + d.co.join("; ") + ". ";
     
     const lib = SUC[d.nome] || [];
     if (d.pre !== null || lib.length) txt += "Libera: " + (lib.length ? lib.join("; ") : "nenhuma disciplina do fluxo") + ".";
     txt += " Em azul, a cadeia de pré-requisitos; em verde, o que ela libera.";
-    
-    return (
-      <>
-        <b>{d.nome}</b> ({head}). {txt}
-      </>
-    );
+    return <><b>{d.nome}</b> ({head}). {txt}</>;
   };
 
-  // Filtragem da tabela
   const periodos = useMemo(() => [...new Set(curso.disc.map(d => d.per))].sort((a, b) => perKey(a) - perKey(b)), [curso]);
   const tipos = useMemo(() => [...new Set(curso.disc.map(d => d.tipo))].sort((a, b) => ORD_TIPO[a] - ORD_TIPO[b]), [curso]);
-  
   const linhasTabela = useMemo(() => {
     const q = norm(fq);
     return curso.disc
@@ -537,10 +580,10 @@ export default function Disciplinas() {
       <div className="page-hero">
           <div className="wrap">
               <h1>Matriz Curricular</h1>
-              <p>Escolha o curso para ver o fluxo padrão dos alunos, período a período, e a lista completa de disciplinas conforme o PPC.</p>
+              <p>Escolha o curso para ver o fluxo padrão dos alunos. Na tabela ao fundo, marque as disciplinas concluídas para gerar o seu relatório de matrícula!</p>
               <div className="course-pick" role="group" aria-label="Escolha o curso">
                 {Object.keys(CURSOS).map(k => (
-                  <button key={k} type="button" aria-pressed={cid === k} onClick={() => { setCid(k); setSel(null); }}>
+                  <button key={k} type="button" aria-pressed={cid === k} onClick={() => { setCid(k); setSel(null); setConcluidas(new Set()); }}>
                     {CURSOS[k].nome}
                   </button>
                 ))}
@@ -565,11 +608,9 @@ export default function Disciplinas() {
                   <li><i></i> Obrigatória</li>
                   <li><i className="x"></i> Extensão</li>
                   <li><i className="e"></i> Eletiva</li>
-                  {curso.disc.some(d => d.tipo === "S") && (
-                    <li><i className="s"></i> <span>Estágio</span></li>
-                  )}
+                  {curso.disc.some(d => d.tipo === "S") && (<li><i className="s"></i> <span>Estágio</span></li>)}
+                  <li><i className="ok" style={{borderColor: '#2e7d32', backgroundColor: '#e8f5e9'}}></i> Concluída</li>
               </ul>
-              <p className="hint">Deslize para o lado para ver todos os períodos. Toque em uma disciplina para ver o que ela exige e o que ela libera.</p>
               
               <div className="tw" role="region" aria-label="Fluxo padrão por período" tabIndex="0">
                 <div className="fx">
@@ -581,6 +622,7 @@ export default function Disciplinas() {
                         const isDim = sel && !chain.has(d.nome);
                         const isPre = sel && up.has(d.nome);
                         const isLib = sel && dn.has(d.nome);
+                        const isConc = concluidas.has(d.nome); 
                         
                         let cls = "nd";
                         if (d.tipo === "X") cls += " x";
@@ -591,6 +633,7 @@ export default function Disciplinas() {
                         if (isSel) cls += " sel";
                         if (isPre) cls += " pre";
                         if (isLib) cls += " lib";
+                        if (isConc) cls += " concluida"; 
 
                         return (
                           <button key={i} type="button" className={cls} onClick={() => pick(d)}>
@@ -634,8 +677,38 @@ export default function Disciplinas() {
           )}
 
           <section>
-              <h2>Lista de disciplinas</h2>
+              <h2>Simulador de Matrícula e Lista de Disciplinas</h2>
+              
+              <div className="note" style={{ borderLeftColor: '#0056b3', backgroundColor: '#eef4fb' }}>
+                  <strong>Como usar o Simulador:</strong><br/>
+                  1. Na tabela abaixo, marque a caixa de seleção (✓) nas disciplinas que você já concluiu.<br/>
+                  2. O sistema irá pintar o "Fluxo padrão" acima de verde e calcular automaticamente as disciplinas liberadas e bloqueadas.<br/>
+                  3. Clique no botão azul para baixar um relatório PDF oficial com a sua situação de matrícula atualizada.
+              </div>
+
+              <div className="summary" style={{ marginTop: '15px', marginBottom: '25px' }}>
+                <div className="stat" style={{ borderColor: '#2e7d32' }}>
+                  <small>Disciplinas Concluídas</small>
+                  <b style={{ color: '#2e7d32' }}>{concluidas.size}</b>
+                </div>
+                <div className="stat" style={{ borderColor: '#0056b3' }}>
+                  <small>Liberadas (Pode Cursar)</small>
+                  <b style={{ color: '#0056b3' }}>{liberadas.length}</b>
+                </div>
+                <div className="stat" style={{ borderColor: '#c62828' }}>
+                  <small>Bloqueadas (Faltam Requisitos)</small>
+                  <b style={{ color: '#c62828' }}>{bloqueadas.length}</b>
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '30px' }}>
+                <button className="btn-simulador" onClick={baixarRelatorioPDF}>
+                  📥 Baixar Relatório (PDF)
+                </button>
+              </div>
+
               <p className="lead">Todas as disciplinas do curso: obrigatórias, extensão, eletivas do fluxo e o catálogo de eletivas que podem ser ofertadas.</p>
+              
               <div className="filters">
                   <div>
                     <label htmlFor="fp">Período</label>
@@ -662,16 +735,27 @@ export default function Disciplinas() {
               <div className="tbl-wrap">
                   <table>
                       <thead>
-                        <tr><th>Período</th><th>Código</th><th>Disciplina</th><th>CH</th><th>Tipo</th><th>Equivalências</th></tr>
+                        <tr>
+                           <th>Status</th>
+                           <th>Período</th><th>Código</th><th>Disciplina</th><th>CH</th><th>Tipo</th><th>Equivalências</th>
+                        </tr>
                       </thead>
                       <tbody>
                         {linhasTabela.length === 0 ? (
-                          <tr><td colSpan={6}>Nenhuma disciplina encontrada para este filtro.</td></tr>
+                          <tr><td colSpan={7}>Nenhuma disciplina encontrada.</td></tr>
                         ) : (
                           linhasTabela.map((d, i) => {
                             const ef = enfasesDe(d);
                             return (
-                              <tr key={i}>
+                              <tr key={i} className={concluidas.has(d.nome) ? 'tr-concluida' : ''}>
+                                <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
+                                  <input 
+                                    type="checkbox" 
+                                    className="chk-concluida"
+                                    checked={concluidas.has(d.nome)} 
+                                    onChange={() => toggleConcluida(d.nome)} 
+                                  />
+                                </td>
                                 <td>{perLabel(d.per)}</td>
                                 <td>{d.cod}</td>
                                 <td>{d.nome} {ef && <small>{ef}</small>}</td>
