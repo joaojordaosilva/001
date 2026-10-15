@@ -23,18 +23,18 @@ const CC_TXT = `1|COMP359|Programação 1|72|O
 4|COMP373|Programação 3|72|O|Estrutura de Dados;Banco de Dados;Redes de Computadores|Programação 2
 4|COMP374|Projeto e Análise de Algoritmos|72|O|Estrutura de Dados;Teoria dos Grafos
 4|COMP376|Teoria da Computação|72|O
-4|COMP377|Prática de Extensão em Ciência da Computação 1|75|X|?
+4|COMP377|Prática de Extensão em Ciência da Computação 1|75|X|-
 5|COMP378|Sistemas Operacionais|72|O|Organização e Arquitetura de Computadores
 5|COMP379|Compiladores|72|O|Estrutura de Dados;Teoria da Computação
 5|COMP380|Inteligência Artificial|72|O|Lógica para Computação;Estrutura de Dados
 5|COMP381|Computação Gráfica|72|O
-5|COMP383|Prática de Extensão em Ciência da Computação 2|75|X|?
+5|COMP383|Prática de Extensão em Ciência da Computação 2|75|X|Prática de Extensão em Ciência da Computação 1
 6|COMP382|Projeto e Desenvolvimento de Sistemas|288|O|@5
-6|COMP384|Prática de Extensão em Ciência da Computação 3|75|X|?
+6|COMP384|Prática de Extensão em Ciência da Computação 3|75|X|Prática de Extensão em Ciência da Computação 2
 7|COMP386|Metodologia de Pesquisa e Trabalho Individual|72|O
 7|COMP387|Noções de Direito|72|O
-7|COMP388|Prática de Extensão em Ciência da Computação 4|75|X|?
-8|COMP385|Prática de Extensão em Ciência da Computação 5|75|X|?
+7|COMP388|Prática de Extensão em Ciência da Computação 4|75|X|Prática de Extensão em Ciência da Computação 3
+8|COMP385|Prática de Extensão em Ciência da Computação 5|75|X|Prática de Extensão em Ciência da Computação 4
 N|COMP404|Cálculo 3|72|N|Cálculo Diferencial e Integral
 N|COMP389|Conceitos de Linguagem de Programação|72|N
 N|COMP390|Aprendizagem de Máquina|72|N|Cálculo 3
@@ -355,10 +355,14 @@ const EQUIVALENCIAS = {
 const TIPOS = { O: "Obrigatória", E: "Eletiva", X: "Extensão", N: "Ênfase", S: "Estágio" };
 const ORD_TIPO = { O: 0, S: 1, X: 2, N: 3, E: 4 };
 
+let uidCounter = 0;
+const getUid = () => `uid_${uidCounter++}`;
+
 function parse(txt, def) {
   return txt.trim().split("\n").map(l => {
     const p = l.split("|"), per = p[0].trim(), pre = (p[5] || "").trim();
     return {
+      uid: getUid(),
       per: isNaN(+per) ? per : +per, cod: p[1], nome: p[2], ch: p[3] ? +p[3] : null, tipo: p[4],
       pre: pre === "" ? def : pre === "?" ? null : pre === "-" ? [] : (pre === "@5" || pre === "var") ? pre : pre.split(";"),
       co: (p[6] || "").split(";").filter(Boolean)
@@ -369,12 +373,12 @@ function catalogo(txt, ch) {
   return txt.trim().split("\n").map(l => {
     const p = l.split("|");
     return p.length > 1
-      ? { per: "C", cod: p[0], nome: p[1], ch: +p[2], tipo: "E", pre: null, co: [] }
-      : { per: "C", cod: "—", nome: p[0], ch: ch, tipo: "E", pre: null, co: [] };
+      ? { uid: getUid(), per: "C", cod: p[0], nome: p[1], ch: +p[2], tipo: "E", pre: null, co: [] }
+      : { uid: getUid(), per: "C", cod: "—", nome: p[0], ch: ch, tipo: "E", pre: null, co: [] };
   });
 }
 function slots(lista, per, n, ch) {
-  for (let i = 0; i < n; i++) lista.push({ per, cod: "—", nome: "Eletiva", ch, tipo: "E", pre: "var", co: [] });
+  for (let i = 0; i < n; i++) lista.push({ uid: getUid(), per, cod: "—", nome: "Eletiva", ch, tipo: "E", pre: "var", co: [] });
 }
 
 const CC = parse(CC_TXT, []);
@@ -451,10 +455,14 @@ export default function Disciplinas() {
   const [fp, setFp] = useState('all');
   const [ft, setFt] = useState('all');
   const [fq, setFq] = useState('');
-  
-  const [concluidas, setConcluidas] = useState(new Set());
+  const [expandirRelatorio, setExpandirRelatorio] = useState(false);
+  const [concluidasUid, setConcluidasUid] = useState(new Set());
 
   const curso = CURSOS[cid];
+
+  const concluidasNomes = useMemo(() => {
+    return new Set(curso.disc.filter(d => concluidasUid.has(d.uid)).map(d => d.nome));
+  }, [concluidasUid, curso]);
 
   const { PRE, SUC, flowDisc, byPeriodo } = useMemo(() => {
     const flow = curso.disc.filter(d => typeof d.per === "number");
@@ -471,16 +479,25 @@ export default function Disciplinas() {
     return { PRE: pre, SUC: suc, flowDisc: flow, byPeriodo: byPer };
   }, [cid]);
 
-  const { liberadas, bloqueadas } = useMemo(() => {
+  const { liberadas, bloqueadas, concluidasList, horasEletivas, horasExtensao } = useMemo(() => {
     const lib = [];
     const bloq = [];
+    const conc = [];
+    let chEletivas = 0;
+    let chExtensao = 0;
     
     curso.disc.forEach(d => {
-      if (concluidas.has(d.nome)) return;
-      if (d.tipo === 'E' || d.tipo === 'X' || d.tipo === 'N' || d.tipo === 'S') return;
+      if (concluidasUid.has(d.uid)) {
+        conc.push(d);
+        if (d.tipo === 'E' || d.tipo === 'N') chEletivas += (d.ch || 0);
+        if (d.tipo === 'X') chExtensao += (d.ch || 0);
+        return;
+      }
+      
+      if (d.tipo === 'E' || d.tipo === 'N' || d.tipo === 'S') return;
 
       const preReqs = PRE[d.nome] || [];
-      const temTudo = preReqs.every(pr => concluidas.has(pr));
+      const temTudo = preReqs.every(pr => concluidasNomes.has(pr));
 
       if (temTudo) lib.push(d);
       else bloq.push(d);
@@ -488,15 +505,16 @@ export default function Disciplinas() {
     
     lib.sort((a, b) => perKey(a.per) - perKey(b.per));
     bloq.sort((a, b) => perKey(a.per) - perKey(b.per));
+    conc.sort((a, b) => perKey(a.per) - perKey(b.per));
     
-    return { liberadas: lib, bloqueadas: bloq };
-  }, [curso, concluidas, PRE]);
+    return { liberadas: lib, bloqueadas: bloq, concluidasList: conc, horasEletivas: chEletivas, horasExtensao: chExtensao };
+  }, [curso, concluidasUid, concluidasNomes, PRE]);
 
-  const toggleConcluida = (nome) => {
-    setConcluidas(prev => {
+  const toggleConcluida = (uid) => {
+    setConcluidasUid(prev => {
       const novoSet = new Set(prev);
-      if (novoSet.has(nome)) novoSet.delete(nome);
-      else novoSet.add(nome);
+      if (novoSet.has(uid)) novoSet.delete(uid);
+      else novoSet.add(uid);
       return novoSet;
     });
   };
@@ -510,24 +528,43 @@ export default function Disciplinas() {
 
     doc.setFontSize(11);
     doc.setTextColor(51, 51, 51);
-    doc.text(`Disciplinas Concluídas: ${concluidas.size}`, 14, 30);
+    doc.text(`Disciplinas Concluídas: ${concluidasList.length}`, 14, 30);
+    doc.text(`Horas Cumpridas de Eletivas: ${horasEletivas} h`, 14, 36);
+    doc.text(`Horas Cumpridas de Extensão/ACEs: ${horasExtensao} h`, 14, 42);
 
-    autoTable(doc, {
-      startY: 35,
-      head: [['Período', 'Código', 'Disciplinas Liberadas (Pode cursar no próximo semestre)']],
-      body: liberadas.map(d => [`${d.per}º`, d.cod !== '—' ? d.cod : '', d.nome]),
-      headStyles: { fillColor: [46, 125, 50] } 
-    });
+    let currentY = 50;
 
-    autoTable(doc, {
-      startY: doc.lastAutoTable.finalY + 15,
-      head: [['Período', 'Código', 'Disciplinas Bloqueadas', 'Pré-requisitos em falta']],
-      body: bloqueadas.map(d => {
-        const faltam = (PRE[d.nome] || []).filter(p => !concluidas.has(p));
-        return [`${d.per}º`, d.cod !== '—' ? d.cod : '', d.nome, faltam.join(', ')];
-      }),
-      headStyles: { fillColor: [183, 28, 28] } 
-    });
+    if (concluidasList.length > 0) {
+      autoTable(doc, {
+        startY: currentY,
+        head: [['Período', 'Código', 'Disciplinas Concluídas']],
+        body: concluidasList.map(d => [`${d.per}º`, d.cod !== '—' ? d.cod : '', d.nome]),
+        headStyles: { fillColor: [51, 51, 51] } 
+      });
+      currentY = doc.lastAutoTable.finalY + 15;
+    }
+
+    if (liberadas.length > 0) {
+      autoTable(doc, {
+        startY: currentY,
+        head: [['Período', 'Código', 'Disciplinas Liberadas (Pode cursar)']],
+        body: liberadas.map(d => [`${d.per}º`, d.cod !== '—' ? d.cod : '', d.nome]),
+        headStyles: { fillColor: [46, 125, 50] } 
+      });
+      currentY = doc.lastAutoTable.finalY + 15;
+    }
+
+    if (bloqueadas.length > 0) {
+      autoTable(doc, {
+        startY: currentY,
+        head: [['Período', 'Código', 'Disciplinas Bloqueadas', 'Pré-requisitos em falta']],
+        body: bloqueadas.map(d => {
+          const faltam = (PRE[d.nome] || []).filter(p => !concluidasNomes.has(p));
+          return [`${d.per}º`, d.cod !== '—' ? d.cod : '', d.nome, faltam.join(', ')];
+        }),
+        headStyles: { fillColor: [183, 28, 28] } 
+      });
+    }
 
     doc.save(`GIC_Simulador_Matricula_${cid.toUpperCase()}.pdf`);
   };
@@ -583,7 +620,7 @@ export default function Disciplinas() {
               <p>Escolha o curso para ver o fluxo padrão dos alunos. Na tabela ao fundo, marque as disciplinas concluídas para gerar o seu relatório de matrícula!</p>
               <div className="course-pick" role="group" aria-label="Escolha o curso">
                 {Object.keys(CURSOS).map(k => (
-                  <button key={k} type="button" aria-pressed={cid === k} onClick={() => { setCid(k); setSel(null); setConcluidas(new Set()); }}>
+                  <button key={k} type="button" aria-pressed={cid === k} onClick={() => { setCid(k); setSel(null); setConcluidasUid(new Set()); setExpandirRelatorio(false); }}>
                     {CURSOS[k].nome}
                   </button>
                 ))}
@@ -622,7 +659,7 @@ export default function Disciplinas() {
                         const isDim = sel && !chain.has(d.nome);
                         const isPre = sel && up.has(d.nome);
                         const isLib = sel && dn.has(d.nome);
-                        const isConc = concluidas.has(d.nome); 
+                        const isConc = concluidasUid.has(d.uid); 
                         
                         let cls = "nd";
                         if (d.tipo === "X") cls += " x";
@@ -681,31 +718,62 @@ export default function Disciplinas() {
               
               <div className="note" style={{ borderLeftColor: '#0056b3', backgroundColor: '#eef4fb' }}>
                   <strong>Como usar o Simulador:</strong><br/>
-                  1. Na tabela abaixo, marque a caixa de seleção (✓) nas disciplinas que você já concluiu.<br/>
-                  2. O sistema irá pintar o "Fluxo padrão" acima de verde e calcular automaticamente as disciplinas liberadas e bloqueadas.<br/>
-                  3. Clique no botão azul para baixar um relatório PDF oficial com a sua situação de matrícula atualizada.
+                  1. Na tabela abaixo, marque a caixa de seleção (✓) nas disciplinas, ACEs ou Eletivas que você já concluiu.<br/>
+                  2. O sistema calcula automaticamente o que foi liberado e o progresso da sua carga horária.<br/>
+                  3. Clique no botão azul para baixar o relatório PDF, ou no botão cinza para o ver na tela.
               </div>
 
               <div className="summary" style={{ marginTop: '15px', marginBottom: '25px' }}>
-                <div className="stat" style={{ borderColor: '#2e7d32' }}>
+                <div className="stat" style={{ borderColor: '#333' }}>
                   <small>Disciplinas Concluídas</small>
-                  <b style={{ color: '#2e7d32' }}>{concluidas.size}</b>
+                  <b style={{ color: '#333' }}>{concluidasList.length}</b>
                 </div>
-                <div className="stat" style={{ borderColor: '#0056b3' }}>
+                <div className="stat" style={{ borderColor: '#2e7d32' }}>
                   <small>Liberadas (Pode Cursar)</small>
-                  <b style={{ color: '#0056b3' }}>{liberadas.length}</b>
+                  <b style={{ color: '#2e7d32' }}>{liberadas.length}</b>
                 </div>
                 <div className="stat" style={{ borderColor: '#c62828' }}>
-                  <small>Bloqueadas (Faltam Requisitos)</small>
+                  <small>Bloqueadas</small>
                   <b style={{ color: '#c62828' }}>{bloqueadas.length}</b>
+                </div>
+                <div className="stat" style={{ borderColor: '#e0a82e' }}>
+                  <small>Progresso: Eletivas</small>
+                  <b style={{ color: '#e0a82e' }}>{horasEletivas} h</b>
+                </div>
+                <div className="stat" style={{ borderColor: '#0056b3' }}>
+                  <small>Progresso: Extensão/ACEs</small>
+                  <b style={{ color: '#0056b3' }}>{horasExtensao} h</b>
                 </div>
               </div>
 
-              <div style={{ marginBottom: '30px' }}>
+              <div style={{ marginBottom: '30px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                 <button className="btn-simulador" onClick={baixarRelatorioPDF}>
                   📥 Baixar Relatório (PDF)
                 </button>
+                <button className="btn-simulador-alt" onClick={() => setExpandirRelatorio(!expandirRelatorio)}>
+                  {expandirRelatorio ? "Ocultar Relatório na Tela" : "👁️ Ver Relatório na Tela"}
+                </button>
               </div>
+
+              {expandirRelatorio && (
+                <div className="onscreen-report">
+                  <div className="report-box ok">
+                    <h4>✅ Concluídas ({concluidasList.length})</h4>
+                    <ul>{concluidasList.length ? concluidasList.map(d => <li key={d.uid}>{d.per}º - {d.nome}</li>) : <li>Nenhuma marcada.</li>}</ul>
+                  </div>
+                  <div className="report-box lib">
+                    <h4>🔓 Liberadas ({liberadas.length})</h4>
+                    <ul>{liberadas.length ? liberadas.map(d => <li key={d.uid}>{d.per}º - {d.nome}</li>) : <li>Nenhuma liberada.</li>}</ul>
+                  </div>
+                  <div className="report-box bloq">
+                    <h4>🔒 Bloqueadas ({bloqueadas.length})</h4>
+                    <ul>{bloqueadas.length ? bloqueadas.map(d => {
+                      const faltam = (PRE[d.nome] || []).filter(p => !concluidasNomes.has(p));
+                      return <li key={d.uid}>{d.per}º - {d.nome} <span>(Falta: {faltam.join(', ')})</span></li>;
+                    }) : <li>Nenhuma bloqueada.</li>}</ul>
+                  </div>
+                </div>
+              )}
 
               <p className="lead">Todas as disciplinas do curso: obrigatórias, extensão, eletivas do fluxo e o catálogo de eletivas que podem ser ofertadas.</p>
               
@@ -747,13 +815,13 @@ export default function Disciplinas() {
                           linhasTabela.map((d, i) => {
                             const ef = enfasesDe(d);
                             return (
-                              <tr key={i} className={concluidas.has(d.nome) ? 'tr-concluida' : ''}>
+                              <tr key={d.uid} className={concluidasUid.has(d.uid) ? 'tr-concluida' : ''}>
                                 <td style={{textAlign: 'center', verticalAlign: 'middle'}}>
                                   <input 
                                     type="checkbox" 
                                     className="chk-concluida"
-                                    checked={concluidas.has(d.nome)} 
-                                    onChange={() => toggleConcluida(d.nome)} 
+                                    checked={concluidasUid.has(d.uid)} 
+                                    onChange={() => toggleConcluida(d.uid)} 
                                   />
                                 </td>
                                 <td>{perLabel(d.per)}</td>

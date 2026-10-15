@@ -300,3 +300,21 @@ details.main-topic > summary { font-size: 18px; color: #0056b3; background-color
 .page-oportunidades .win__body p { margin: 0 0 16px; font-size: 15px; line-height: 1.65; color: var(--mu); }
 .page-oportunidades .btn-more { display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 0 26px; background: var(--blue); color: #fff; border-radius: 999px; font: 700 15px 'Montserrat', Arial, sans-serif; text-decoration: none; transition: transform .15s, box-shadow .15s, background .15s; cursor: pointer; border: none; }
 .page-oportunidades .btn-more:hover { background: var(--blue-dark); transform: translateY(-2px); box-shadow: 0 8px 18px rgba(0,0,0,0.2); }
+
+/* Botão secundário de visualização */
+.page-disciplinas .btn-simulador-alt { 
+    display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 26px; 
+    background: #eef4fb; color: var(--blue-dark); border-radius: 999px; font: 700 15px 'Montserrat', Arial, sans-serif; 
+    text-decoration: none; transition: transform .15s, box-shadow .15s, background .15s; cursor: pointer; border: 1px solid var(--blue); 
+}
+.page-disciplinas .btn-simulador-alt:hover { background: #dcebfb; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+/* Caixas do relatório no ecrã */
+.page-disciplinas .onscreen-report { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-bottom: 30px; }
+.page-disciplinas .report-box { background: #fff; border: 1px solid #ddd; border-top: 4px solid #ddd; border-radius: 8px; padding: 15px; max-height: 350px; overflow-y: auto; }
+.page-disciplinas .report-box h4 { margin-top: 0; margin-bottom: 10px; font-size: 16px; }
+.page-disciplinas .report-box ul { margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.6; }
+.page-disciplinas .report-box ul span { color: #888; font-size: 12px; display: block; }
+.page-disciplinas .report-box.ok { border-top-color: #333; }
+.page-disciplinas .report-box.lib { border-top-color: #2e7d32; }
+.page-disciplinas .report-box.bloq { border-top-color: #c62828; }
