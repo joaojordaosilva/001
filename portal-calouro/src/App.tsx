@@ -11,15 +11,12 @@ function App() {
 
   const renderizarPagina = () => {
     switch (paginaAtiva) {
-      // 1. Passamos a função setPaginaAtiva para a Home
       case 'inicio': return <Home setPaginaAtiva={setPaginaAtiva} />;
-      // 2. Adicionámos a página oculta do Calouro
       case 'calouro': return <Calouro />;
       case 'oportunidades': return <Oportunidades />;
       case 'tutoriais': return <Tutoriais />;
       case 'disciplinas': return <Disciplinas />;
       case 'calculadora': return <Calculadora />;
-      // 3. Atualizámos a página por defeito
       default: return <Home setPaginaAtiva={setPaginaAtiva} />;
     }
   };
@@ -28,11 +25,9 @@ function App() {
     <>
       <header>
         <a href="#" onClick={(e) => { e.preventDefault(); setPaginaAtiva('inicio'); }} className="logo">
-          {/* Se o logótipo estiver solto na pasta public, o caminho é apenas /logo.png */}
           <img src="/logo.png" alt="Logo GIC" />
         </a>
 
-        {/* A navegação agora está DENTRO do header, na mesma linha da logo */}
         <nav className="capsule-nav">
           <a href="#" className={paginaAtiva === 'inicio' ? 'active' : ''} onClick={(e) => { e.preventDefault(); setPaginaAtiva('inicio'); }}>Início</a>
           <a href="#" className={paginaAtiva === 'oportunidades' ? 'active' : ''} onClick={(e) => { e.preventDefault(); setPaginaAtiva('oportunidades'); }}>Oportunidades</a>
@@ -42,7 +37,6 @@ function App() {
         </nav>
       </header>
 
-      {/* Retirámos a tag <main> que limitava a largura, deixando a página livre */}
       <div className="main-content">
         {renderizarPagina()}
       </div>

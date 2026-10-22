@@ -1,203 +1,351 @@
-import { useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 
 /* =====================================================================
-   DADOS DA PÁGINA DE OPORTUNIDADES
+   MOLDES DO TYPESCRIPT
    ===================================================================== */
-const GRUPOS = [
+interface Oportunidade {
+  id: string;
+  titulo: string;
+  descricao: string;
+  link: string;
+  img?: string;
+  tags: string[];
+}
+
+interface SecaoOportunidade {
+  id: string;
+  categoria: string;
+  icone: string;
+  titulo: string;
+  subtitulo: string;
+  itens: Oportunidade[];
+}
+
+/* =====================================================================
+   DADOS DA PÁGINA
+   ===================================================================== */
+const CATEGORIAS = [
+  { id: "pesquisa", nome: "Pesquisa & Labs" },
+  { id: "ensino", nome: "Monitoria & Ensino" },
+  { id: "extensao", nome: "Extensão" },
+  { id: "mercado", nome: "Estágio & Mercado" }
+];
+
+const SECOES: SecaoOportunidade[] = [
   {
-    nome: "Instituto de Computação",
-    desc: "O que o IC oferece dentro do próprio instituto.",
-    pastas: [
+    id: "labs",
+    categoria: "pesquisa",
+    icone: "🔬",
+    titulo: "Laboratórios e Pesquisa",
+    subtitulo: "Iniciação científica, bolsas de pesquisa e grupos de estudo.",
+    itens: [
       {
-        id: "laboratorios",
-        nome: "Laboratórios",
-        desc: "Principais laboratórios de ensino e infraestrutura do IC.",
-        janelas: [
-          { titulo: "Laboratórios de Informática", texto: "O IC tem 3 laboratórios de informática, com 70 computadores no total, usados nas aulas de graduação.", img: "", link: "" },
-          { titulo: "Laboratório de Controle", texto: "Espaço de ensino e pesquisa em análise e controle de sistemas dinâmicos. Conta com tanques acoplados, pêndulo invertido rotacional duplo, estações com Matlab/Simulink e uma bancada de energia solar fotovoltaica.", img: "", link: "" },
-          { titulo: "Laboratório de Robótica e Processamento de Sinais", texto: "Focado em robótica fixa, navegação autônoma, manipulação e visão robótica, com braços manipuladores e plataformas móveis.", img: "", link: "" },
-          { titulo: "Laboratório de Eletricidade e Eletrônica", texto: "Tem 9 bancadas de instrumentação, com osciloscópios digitais, fontes CC variáveis, geradores de funções, multímetros e microcomputadores.", img: "", link: "" },
-          { titulo: "Laboratório de Sistemas Embarcados", texto: "Reúne kits educacionais de FPGA e microcontroladores (arquiteturas PIC e ARM) para aulas e pesquisas em sistemas digitais.", img: "", link: "" }
-        ]
+        id: "pibic",
+        titulo: "Iniciação Científica (PIBIC/PIBITI)",
+        descricao: "Bolsas anuais (CNPq/FAPEAL) para desenvolver projetos de pesquisa orientados por professores. Ótimo para quem deseja seguir carreira acadêmica ou mestrado.",
+        link: "#",
+        tags: ["bolsa", "pesquisa", "cnpq"],
+        img: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&q=80&w=400"
       },
       {
-        id: "extensao",
-        nome: "Projetos de Extensão",
-        desc: "Projetos e programas de extensão do IC UFAL.",
-        janelas: [
-          { titulo: "TATU (Tecnologia Assistiva no Turismo)", texto: "Projeto interdisciplinar sediado no laboratório TOCA, em parceria com a Faculdade de Letras e o IGDEMA. Desenvolve um aplicativo gratuito com audiodescrição para pessoas com deficiência visual ou auditiva em pontos turísticos de Alagoas, usando Bluetooth/Beacons e GPS.", img: "", link: "" },
-          { titulo: "Pós-Carnaval do MusIC", texto: "Projeto musical organizado por estudantes de Ciência da Computação e Engenharia de Computação, ligado à Liga Acadêmica de Computação (LAComp). Promove apresentações temáticas e culturais dentro e fora do instituto.", img: "", link: "" },
-          { titulo: "SECOMP (Semana da Computação)", texto: "Evento periódico do programa de extensão do IC, com palestras, minicursos, trilhas temáticas (como Inteligência Artificial, Cibersegurança e Hardware) e competições, como o sumô de robôs da RAS. Aproxima estudantes e comunidade do mercado de tecnologia.", img: "", link: "" },
-          { titulo: "Ramo IEEE e Capítulo IEEE RAS", texto: "Atividades de extensão em robótica e automação, voltadas ao desenvolvimento de competências técnicas e de liderança entre os estudantes.", img: "", link: "" },
-          { titulo: "Edge Academy", texto: "Projeto de formação avançada de talentos em tecnologia para estudantes dos cursos de computação da UFAL, em parceria com a Softex e o MCTI.", img: "", link: "" }
-        ]
+        id: "nees",
+        titulo: "NEES - Computação na Educação",
+        descricao: "O Núcleo de Excelência em Tecnologias Sociais é um dos maiores laboratórios do IC, focado em inteligência artificial e sistemas para o Ministério da Educação.",
+        link: "#",
+        tags: ["laboratório", "ia", "desenvolvimento"]
       },
       {
-        id: "monitoria",
-        nome: "Monitoria",
-        desc: "Programa de Monitoria da UFAL.",
-        janelas: [
-          { titulo: "Programa de Monitoria", texto: "O programa geral da UFAL conta com monitores bolsistas e monitores voluntários, que atuam sem bolsa.", img: "", link: "" },
-          { titulo: "Valor da bolsa", texto: "O auxílio padrão para bolsistas do programa institucional de monitoria da UFAL é de R$ 400,00 por mês.", img: "", link: "" },
-          { titulo: "Editais e inscrição", texto: "Os editais gerais, os manuais e o sistema de inscrições e relatórios são gerenciados pela Página de Monitoria da UFAL e pelo SIGAA - Projetos de Monitoria.", img: "", link: "" }
-        ]
+        id: "edge",
+        titulo: "Edge Computing (LACC)",
+        descricao: "Laboratório de Computação em Nuvem e Borda. Projetos focados em cidades inteligentes, IoT e redes.",
+        link: "#",
+        tags: ["laboratório", "redes", "iot"]
       }
     ]
   },
   {
-    nome: "UFAL",
-    desc: "Apoio e serviços da universidade para todos os estudantes.",
-    pastas: [
+    id: "monitoria",
+    categoria: "ensino",
+    icone: "👨‍🏫",
+    titulo: "Monitoria e Ensino",
+    subtitulo: "Ajude outros alunos, reforce seu conhecimento e ganhe bolsa.",
+    itens: [
       {
-        id: "assistencia",
-        nome: "Assistência Estudantil",
-        desc: "Apoio à permanência e ao sucesso acadêmico de estudantes em vulnerabilidade social.",
-        janelas: [
-          { titulo: "Assistência Estudantil da UFAL", texto: "É gerenciada pela Pró-Reitoria Estudantil (Proest) e, nos campi do interior, pelos Núcleos de Assistência Estudantil (NAE). Seu objetivo é apoiar a permanência e o sucesso acadêmico de estudantes em vulnerabilidade social.", img: "", link: "" },
-          { titulo: "Como participar", texto: "É obrigatório fazer o Cadastramento Socioeconômico pelos editais publicados na página de Assistência Estudantil da UFAL. A seleção define o Índice de Vulnerabilidade Socioeconômica (IVS), que estabelece a ordem de prioridade das convocações.", img: "", link: "" },
-          { titulo: "Bolsa Pró-Graduando (BPG)", texto: "Apoio financeiro mensal para despesas acadêmicas.", img: "", link: "" },
-          { titulo: "Auxílio Moradia e Residência Universitária", texto: "Vagas em residências universitárias ou auxílio em dinheiro para estudantes que vêm de fora.", img: "", link: "" },
-          { titulo: "Auxílio Alimentação", texto: "Subsídio ou refeições nas unidades que têm Restaurante Universitário.", img: "", link: "" },
-          { titulo: "Auxílio Creche", texto: "Apoio para estudantes com filhos de até 5 anos e 11 meses.", img: "", link: "" },
-          { titulo: "Outros auxílios", texto: "Bolsas de inclusão digital, apoio pedagógico, acessibilidade (NAC) e auxílios emergenciais.", img: "", link: "" }
-        ]
+        id: "mon-ic",
+        titulo: "Monitoria do Instituto de Computação",
+        descricao: "Editais semestrais para monitoria remunerada ou voluntária nas disciplinas base (Programação 1, Matemática Discreta, Cálculo). Exige nota alta na matéria.",
+        link: "#",
+        tags: ["bolsa", "ensino", "p1"]
+      }
+    ]
+  },
+  {
+    id: "ext",
+    categoria: "extensao",
+    icone: "🚀",
+    titulo: "Projetos de Extensão",
+    subtitulo: "Aplique a computação na sociedade e cumpra suas ACEs.",
+    itens: [
+      {
+        id: "maratona",
+        titulo: "Maratona de Programação",
+        descricao: "Treinamentos semanais para competições de algoritmos (ICPC). Desenvolve raciocínio lógico rápido e é muito valorizado por Big Techs.",
+        link: "#",
+        tags: ["competição", "algoritmos", "c++", "extensão"]
       },
       {
-        id: "bibliotecas",
-        nome: "Sistema de Bibliotecas",
-        desc: "SiBi/UFAL e a Biblioteca Central.",
-        janelas: [
-          { titulo: "Sistema de Bibliotecas (SiBi/UFAL)", texto: "Gerencia o acesso ao conhecimento em todos os campi da universidade. É formado pelo Arquivo Central e por 15 bibliotecas distribuídas por Alagoas.", img: "", link: "" },
-          { titulo: "Biblioteca Central (BC)", texto: "A principal biblioteca do sistema, localizada no Campus A. C. Simões, em Maceió.", img: "", link: "" }
-        ]
+        id: "meninas",
+        titulo: "Meninas na Computação",
+        descricao: "Projeto que visa incentivar alunas do ensino médio e fundamental a ingressarem nas carreiras de exatas e tecnologia.",
+        link: "#",
+        tags: ["inclusão", "sociedade", "extensão"]
+      }
+    ]
+  },
+  {
+    id: "mercado",
+    categoria: "mercado",
+    icone: "💼",
+    titulo: "Estágio e Mercado",
+    subtitulo: "Empresas juniores, vagas e preparação para a carreira.",
+    itens: [
+      {
+        id: "ej",
+        titulo: "Empresa Júnior",
+        descricao: "Viva a experiência de uma empresa real ainda na graduação. Desenvolva sites, sistemas e lide com clientes reais sob a orientação de professores.",
+        link: "#",
+        tags: ["mercado", "web", "experiência"]
       },
       {
-        id: "restaurante",
-        nome: "Restaurante Universitário",
-        desc: "Almoço e jantar completos dentro dos campi.",
-        janelas: [
-          { titulo: "Restaurante Universitário (RU)", texto: "Serviço de alimentação da UFAL que garante almoço e jantar completos a preços muito baixos, ou gratuitos, dentro dos campi.", img: "", link: "" },
-          { titulo: "O que oferece", texto: "Refeições nutritivas com prato principal (incluindo opção vegetariana), acompanhamentos, salada, suco e sobremesa.", img: "", link: "" },
-          { titulo: "Onde funciona", texto: "Nos campi de Maceió, Arapiraca, Rio Largo (Ceca) e Delmiro Gouveia (Sertão).", img: "", link: "" },
-          { titulo: "Como pagar e entrar", texto: "O sistema é 100% digital. Você compra créditos online pelo aplicativo ou pelo portal Minha UFAL e entra apresentando um documento com foto e a validação no celular.", img: "", link: "" },
-          { titulo: "Alimentação gratuita", texto: "Estudantes em vulnerabilidade socioeconômica podem pedir isenção total do pagamento pelos editais da Proest.", img: "", link: "" }
-        ]
+        id: "mural",
+        titulo: "Mural de Estágios",
+        descricao: "Acompanhe as vagas divulgadas pela coordenação em parceria com empresas locais e nacionais (remoto).",
+        link: "#",
+        tags: ["vagas", "trabalho", "remoto"]
       }
     ]
   }
 ];
 
 /* =====================================================================
-   COMPONENTES INTERNOS
-   ===================================================================== */
-const IcoFoto = () => (
-  <svg viewBox="0 0 54 54" aria-hidden="true">
-    <rect x="5" y="9" width="44" height="36" rx="6" fill="none" stroke="currentColor" strokeWidth="3"/>
-    <circle cx="18" cy="21" r="4.5" fill="currentColor"/>
-    <path d="M7 41l14-13 9 8 8-7 9 9" fill="none" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round"/>
-  </svg>
-);
-
-const IcoPasta = () => (
-  <svg className="ico" viewBox="0 0 44 36" aria-hidden="true">
-    <path d="M2 6a4 4 0 0 1 4-4h10l4 5h18a4 4 0 0 1 4 4v19a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4z" fill="currentColor"/>
-  </svg>
-);
-
-const IcoSeta = () => (
-  <svg className="chev" viewBox="0 0 20 20" aria-hidden="true">
-    <path d="M4 7l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-
-/* =====================================================================
    PÁGINA PRINCIPAL
    ===================================================================== */
 export default function Oportunidades() {
+  const [busca, setBusca] = useState("");
+  const [categoriaAtiva, setCategoriaAtiva] = useState("todos");
   
+  // Estados para a Lógica do Botão e Menu
+  const [scrolled, setScrolled] = useState(false);
+  const [btnShrunk, setBtnShrunk] = useState(false);
+  const [menuAberto, setMenuAberto] = useState(false);
+
   useEffect(() => {
-    // Garante que o scroll vá para o topo ou para o hash correto ao carregar a página
-    if (window.location.hash) {
-      abrir(window.location.hash.slice(1));
-    } else {
-      window.scrollTo(0, 0);
-    }
+    window.scrollTo(0, 0);
   }, []);
 
-  const abrir = (id: string) => {
-    const el = document.getElementById(id) as HTMLDetailsElement;
-    if (el && el.tagName === "DETAILS") {
-      el.open = true;
-      setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+  // Monitoriza a rolagem da página para esconder/mostrar o botão
+  useEffect(() => {
+    const onScroll = () => {
+      // 380px é aproximadamente quando o banner com os filtros sai do ecrã
+      if (window.scrollY > 380) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+        setBtnShrunk(false); // Reseta o estado ao voltar para o topo
+      }
+    };
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // Gere os 3 segundos de expansão automática quando o botão aparece
+  useEffect(() => {
+    let timer: number;
+    if (scrolled && !menuAberto) {
+      setBtnShrunk(false); // Garante que nasce aberto
+      timer = window.setTimeout(() => {
+        setBtnShrunk(true); // Encolhe após 3 segundos
+      }, 3000);
+    }
+    return () => clearTimeout(timer);
+  }, [scrolled, menuAberto]);
+
+  // Ação de clicar no botão flutuante
+  const handleBtnClick = () => {
+    if (btnShrunk) {
+      setBtnShrunk(false); // Se está encolhido (só o ícone), expande a palavra
+    } else {
+      setMenuAberto(true); // Se já está expandido, abre o menu
+    }
+  };
+
+  // Ação centralizada para fechar o menu (encolhe o botão automaticamente)
+  const fecharMenu = () => {
+    setMenuAberto(false);
+    setBtnShrunk(true); 
+  };
+
+  const norm = (s: string) => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+  const secoesFiltradas = useMemo(() => {
+    const q = norm(busca);
+    const result: SecaoOportunidade[] = [];
+
+    SECOES.forEach(sec => {
+      if (categoriaAtiva !== "todos" && sec.categoria !== categoriaAtiva) return;
+
+      if (q) {
+        const itensFiltrados = sec.itens.filter(item => {
+          const texto = norm(`${item.titulo} ${item.descricao} ${item.tags.join(" ")}`);
+          return texto.includes(q);
+        });
+
+        if (norm(`${sec.titulo} ${sec.subtitulo}`).includes(q) || itensFiltrados.length > 0) {
+          result.push({ ...sec, itens: itensFiltrados.length > 0 ? itensFiltrados : sec.itens });
+        }
+      } else {
+        result.push(sec);
+      }
+    });
+
+    return result;
+  }, [busca, categoriaAtiva]);
+
+  // Função para navegar pelo menu
+  const clicaLinkMenu = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault();
+    fecharMenu();
+    const elemento = document.getElementById(id);
+    if (elemento) {
+      elemento.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
 
   return (
     <div className="page-oportunidades">
+      
+      {/* ================= MENU LATERAL ================= */}
+      <div className={`oport-overlay ${menuAberto ? 'open' : ''}`} onClick={fecharMenu}></div>
+      
+      <aside className={`oport-sidebar ${menuAberto ? 'open' : ''}`}>
+        <div className="sidebar-header">
+          <h3>Tópicos do Catálogo</h3>
+          <button onClick={fecharMenu}>✕</button>
+        </div>
+        <nav className="sidebar-nav">
+          {secoesFiltradas.length > 0 ? (
+            secoesFiltradas.map(sec => (
+              <a key={sec.id} href={`#${sec.id}`} onClick={(e) => clicaLinkMenu(e, sec.id)}>
+                <span className="ico">{sec.icone}</span> {sec.titulo}
+              </a>
+            ))
+          ) : (
+            <p style={{ padding: '20px', color: '#5a6578', fontSize: '14px', textAlign: 'center' }}>
+              Nenhum tópico encontrado com o filtro atual.
+            </p>
+          )}
+        </nav>
+      </aside>
+
+      {/* BOTÃO FLUTUANTE DINÂMICO */}
+      <button 
+        className={`btn-menu-lateral ${!scrolled ? 'is-hidden' : ''} ${btnShrunk ? 'is-shrunk' : ''}`} 
+        onClick={handleBtnClick} 
+        aria-label="Abrir Menu de Tópicos"
+      >
+        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+        <span className="btn-text">Navegar</span>
+      </button>
+      {/* ================================================ */}
+
       <div className="page-hero">
         <div className="wrap">
-          <h1>Oportunidades</h1>
-          <p>Laboratórios, projetos, bolsas e serviços do Instituto de Computação e da UFAL para você aproveitar ao máximo a graduação. Abra uma pasta para ver o que ela reúne.</p>
-          <nav className="jump" aria-label="Ir para uma pasta">
-            {GRUPOS.flatMap(g => g.pastas).map(p => (
-              <a key={p.id} href={`#${p.id}`} onClick={(e) => { e.preventDefault(); abrir(p.id); }}>
-                {p.nome}
-              </a>
+          <h1>Oportunidades e Projetos</h1>
+          <p>A universidade vai muito além da sala de aula. Descubra laboratórios, projetos de extensão, editais de monitoria e vagas de estágio para turbinar o seu currículo.</p>
+          
+          <div className={`search ${busca ? 'has' : ''}`} style={{ position: 'relative', maxWidth: '520px', marginBottom: '14px' }}>
+            <input 
+              type="search" 
+              placeholder="Buscar: PIBIC, bolsa, web, laboratório..." 
+              value={busca} 
+              onChange={(e) => setBusca(e.target.value)} 
+            />
+            {busca && <button type="button" onClick={() => setBusca("")} aria-label="Limpar busca">×</button>}
+          </div>
+
+          <div className="pills" role="group" aria-label="Filtrar por categoria">
+            <button type="button" aria-pressed={categoriaAtiva === "todos"} onClick={() => setCategoriaAtiva("todos")}>Todos</button>
+            {CATEGORIAS.map(c => (
+              <button key={c.id} type="button" aria-pressed={categoriaAtiva === c.id} onClick={() => setCategoriaAtiva(c.id)}>
+                {c.nome}
+              </button>
             ))}
-          </nav>
+          </div>
         </div>
       </div>
 
       <main className="oport-main">
-        {GRUPOS.map((grupo, gIdx) => (
-          <section className="group" key={gIdx}>
-            <h2>{grupo.nome}</h2>
-            <p>{grupo.desc}</p>
-            
-            {grupo.pastas.map((pasta) => (
-              <details className="folder" id={pasta.id} key={pasta.id}>
-                <summary>
-                  <IcoPasta />
-                  <div className="ttl">
-                    <b>{pasta.nome}</b>
-                    <span>{pasta.desc}</span>
-                  </div>
-                  <IcoSeta />
-                </summary>
-                
-                <div className="wins">
-                  {pasta.janelas.map((win, wIdx) => (
-                    <article className="win" key={wIdx}>
-                      <div className="win__media">
-                        {win.img ? (
-                          <img src={win.img} alt={win.titulo} loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
-                        ) : (
-                          <div className="ph">
-                            <IcoFoto />
-                            <span>Adicione uma foto</span>
-                          </div>
-                        )}
-                      </div>
-                      <div className="win__body">
-                        <h3>{win.titulo}</h3>
-                        <p>{win.texto}</p>
-                        <a 
-                          className="btn-more" 
-                          href={win.link || "#"} 
-                          target={win.link ? "_blank" : undefined} 
-                          rel={win.link ? "noopener noreferrer" : undefined}
-                          onClick={e => !win.link && e.preventDefault()}
-                        >
-                          Saiba mais
-                        </a>
-                      </div>
-                    </article>
-                  ))}
+        {secoesFiltradas.length === 0 ? (
+           <div style={{ padding: '30px', textAlign: 'center', color: '#5a6578', background: '#fff', borderRadius: '10px', marginTop: '40px', border: '1px dashed #d9dfea' }}>
+             Nenhuma oportunidade encontrada com esses filtros.
+           </div>
+        ) : (
+          secoesFiltradas.map(sec => (
+            <section id={sec.id} key={sec.id} className="oport-section">
+              
+              {/* TÍTULO DA SEÇÃO */}
+              <div className="sec-header">
+                <div className="ico">{sec.icone}</div>
+                <div>
+                  <h2>{sec.titulo}</h2>
+                  <p>{sec.subtitulo}</p>
                 </div>
-              </details>
-            ))}
-          </section>
-        ))}
+              </div>
+              
+              {/* CARTÕES ABERTOS */}
+              <div className="wins">
+                {sec.itens.map(item => (
+                  <article className="win" key={item.id}>
+                    <div className="win__media">
+                      {item.img ? (
+                        <img src={item.img} alt={item.titulo} />
+                      ) : (
+                        <div className="ph">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line>
+                          </svg>
+                          GIC UFAL
+                        </div>
+                      )}
+                    </div>
+                    <div className="win__body">
+                      <h3>{item.titulo}</h3>
+                      <p>{item.descricao}</p>
+                      
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '16px' }}>
+                        {item.tags.map((t, i) => (
+                          <span key={i} style={{ fontSize: '11.5px', fontWeight: 600, border: '1px solid #d9dfea', borderRadius: '12px', padding: '2px 10px', color: '#5a6578', background: '#fafbfd', textTransform: 'uppercase' }}>
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+
+                      <a href={item.link} className="btn-more" onClick={e => { if (item.link === "#") e.preventDefault(); }}>
+                        Saiba mais
+                      </a>
+                    </div>
+                  </article>
+                ))}
+              </div>
+              
+            </section>
+          ))
+        )}
       </main>
     </div>
   );
