@@ -293,44 +293,33 @@ details.main-topic > summary { font-size: 18px; color: #0056b3; background-color
 .sidebar-nav a:hover { background: #fff; border-color: var(--blue); color: var(--blue); box-shadow: 0 2px 5px rgba(0,0,0,0.04); }
 .sidebar-nav a .ico { font-size: 20px; }
 
-/* Botão Flutuante Dinâmico (Lógica Hide/Shrink/Expand) */
+/* Botão Flutuante Dinâmico e Móvel (Arrastável) */
 .btn-menu-lateral {
-    position: fixed; left: 0; top: 50%; transform: translateY(-50%); 
+    position: fixed; 
     background: var(--blue); color: #fff; 
-    padding: 14px 18px 14px 14px; border-radius: 0 50px 50px 0; border: none; cursor: pointer; 
+    padding: 14px 18px; border-radius: 50px; border: none; cursor: grab; 
     font: 700 14px 'Montserrat', Arial, sans-serif; box-shadow: 2px 4px 12px rgba(0,86,179,0.3); 
-    z-index: 990; transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), padding 0.4s ease, gap 0.4s ease, background 0.2s;
-    display: flex; align-items: center; gap: 8px; overflow: hidden;
+    z-index: 990; 
+    /* Removemos a transição de posição para não dar lag ao arrastar */
+    transition: padding 0.4s ease, gap 0.4s ease, background 0.2s, opacity 0.4s ease, transform 0.3s ease;
+    display: flex; align-items: center; justify-content: center; gap: 8px; overflow: hidden;
+    touch-action: none; /* Essencial: Impede a tela do celular de rolar enquanto o utilizador arrasta o botão */
 }
 .btn-menu-lateral:hover { background: var(--blue-dark); }
+.btn-menu-lateral:active, .btn-menu-lateral.is-dragging { cursor: grabbing; transform: scale(1.05); }
 
-/* Estado 1: Oculto no topo da página */
-.btn-menu-lateral.is-hidden {
-    transform: translate(-100%, -50%);
-    box-shadow: none;
-}
+/* Estado 1: Oculto (quando a tela volta ao topo) */
+.btn-menu-lateral.is-hidden { opacity: 0; pointer-events: none; transform: scale(0.8); }
 
-/* Estado 2: Encolhido (só ícone) */
-.btn-menu-lateral.is-shrunk {
-    padding: 14px; /* Fica quadrado */
-    gap: 0;
-}
-.btn-menu-lateral .btn-text {
-    display: inline-block;
-    max-width: 100px; /* Espaço máximo para a palavra 'Navegar' */
-    opacity: 1;
-    transition: max-width 0.4s ease, opacity 0.4s ease;
-}
-.btn-menu-lateral.is-shrunk .btn-text {
-    max-width: 0;
-    opacity: 0;
-}
+/* Estado 2: Encolhido (passa a ser uma bolinha compacta) */
+.btn-menu-lateral.is-shrunk { padding: 14px; gap: 0; }
+.btn-menu-lateral .btn-text { display: inline-block; max-width: 100px; opacity: 1; transition: max-width 0.4s ease, opacity 0.4s ease; white-space: nowrap; }
+.btn-menu-lateral.is-shrunk .btn-text { max-width: 0; opacity: 0; }
 
-/* Mobile Fix para o botão dinâmico */
+/* Ajustes apenas para o tamanho no Mobile, sem forçar posições fixas! */
 @media (max-width: 600px) {
-    .btn-menu-lateral { top: auto; bottom: 85px; left: 0; transform: none; padding: 12px 16px 12px 14px; border-radius: 0 30px 30px 0; font-size: 13px; }
-    .btn-menu-lateral.is-hidden { transform: translateX(-100%); }
-    .btn-menu-lateral.is-shrunk { padding: 12px 14px; }
+    .btn-menu-lateral { padding: 12px 16px; font-size: 13px; }
+    .btn-menu-lateral.is-shrunk { padding: 12px; }
 }
 
 /* Banner / Topo */
@@ -382,4 +371,80 @@ details.main-topic > summary { font-size: 18px; color: #0056b3; background-color
     .page-oportunidades .page-hero { padding: 40px 0 32px; }
     .page-oportunidades .sec-header { flex-direction: column; align-items: flex-start; gap: 12px; }
     .btn-menu-lateral { top: auto; bottom: 85px; left: -5px; transform: none; padding: 12px 16px 12px 14px; border-radius: 0 30px 30px 0; font-size: 13px; }
+}
+
+/* =========================================
+   ESTILOS EXCLUSIVOS: PÁGINA DO CHATBOT
+   ========================================= */
+
+.page-chatbot { display: flex; flex-direction: column; flex: 1; height: 100vh; background-color: #f4f4f9; }
+
+/* Banner Azul mais estreito (sem os títulos antigos) */
+.page-chatbot .page-hero { 
+    color: #fff; 
+    padding: 20px 0 50px; /* Mais fino e elegante */
+    background-color: #0056b3; 
+    background-image: radial-gradient(rgba(255,255,255,0.10) 1.2px, transparent 1.4px), linear-gradient(115deg, #003a7d 0%, #0056b3 55%, #1a76d2 100%); 
+    background-size: 28px 28px, 100% 100%;
+}
+.page-chatbot .page-hero .wrap { max-width: 900px; margin: 0 auto; padding: 0 20px; text-align: center; }
+
+/* Botão Voltar (Sem margem inferior sobrando) */
+.hero-top-actions { display: flex; justify-content: flex-start; margin-bottom: 0; }
+.btn-voltar { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.4); padding: 8px 16px; border-radius: 999px; cursor: pointer; font: 700 14px 'Montserrat', sans-serif; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
+.btn-voltar:hover { background: rgba(255,255,255,0.15); border-color: #fff; }
+
+/* Corpo Principal Flexível */
+.page-chatbot .chat-main { flex: 1; width: 100%; max-width: 900px; margin: -40px auto 20px; padding: 0 20px; position: relative; z-index: 10; display: flex; flex-direction: column; }
+.page-chatbot .chat-container { flex: 1; background: #fff; border: 1px solid #d9dfea; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display: flex; flex-direction: column; min-height: 400px; overflow: hidden; }
+
+/* ==============================================
+   CABEÇALHO DO ROBÔ (Restaurado e Corrigido)
+   ============================================== */
+.page-chatbot .chat-header { background: #fafbfd; border-bottom: 1px solid var(--ln); padding: 16px 20px; display: flex; align-items: center; gap: 14px; }
+.page-chatbot .chat-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--blue-dark); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+.page-chatbot .chat-title { text-align: left; }
+.page-chatbot .chat-title h3 { margin: 0; font-size: 16px; color: var(--ink); font-weight: 700; text-transform: none; }
+.page-chatbot .chat-title span { font-size: 12px; color: #2e7d32; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+.page-chatbot .chat-title span::before { content: ""; display: block; width: 8px; height: 8px; background: #2e7d32; border-radius: 50%; }
+
+/* Balões de Mensagem */
+.page-chatbot .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; background: #f9fbff; }
+.page-chatbot .message-row { display: flex; width: 100%; }
+.page-chatbot .message-row.bot { justify-content: flex-start; }
+.page-chatbot .message-row.user { justify-content: flex-end; }
+.page-chatbot .message-bubble { max-width: 80%; padding: 12px 16px; font-size: 15px; line-height: 1.5; border-radius: 16px; position: relative; word-wrap: break-word; font-family: 'Montserrat', Arial, sans-serif; }
+.page-chatbot .message-row.bot .message-bubble { background: #eaf2fc; color: #1d2b44; border-bottom-left-radius: 4px; border: 1px solid #dcebfb; }
+.page-chatbot .message-row.user .message-bubble { background: #0056b3; color: #fff; border-bottom-right-radius: 4px; }
+
+/* Animação a Escrever */
+.page-chatbot .typing span { display: inline-block; width: 6px; height: 6px; background-color: #0056b3; border-radius: 50%; margin: 0 2px; animation: bounce 1.4s infinite ease-in-out both; }
+.page-chatbot .typing span:nth-child(1) { animation-delay: -0.32s; }
+.page-chatbot .typing span:nth-child(2) { animation-delay: -0.16s; }
+@keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+
+/* Sugestões Rápidas (Formatadas com segurança) */
+.page-chatbot .chat-suggestions { padding: 12px 20px; display: flex; gap: 8px; overflow-x: auto; background: #fff; border-top: 1px solid #d9dfea; scrollbar-width: none; }
+.page-chatbot .chat-suggestions::-webkit-scrollbar { display: none; }
+.page-chatbot .chat-suggestions button { flex-shrink: 0; background: #fff !important; border: 1px solid #0056b3 !important; color: #0056b3 !important; padding: 8px 14px !important; border-radius: 999px !important; font: 600 13px 'Montserrat', sans-serif !important; cursor: pointer; transition: 0.2s; margin: 0; }
+.page-chatbot .chat-suggestions button:hover:not(:disabled) { background: #0056b3 !important; color: #fff !important; }
+.page-chatbot .chat-suggestions button:disabled { opacity: 0.5; cursor: not-allowed; border-color: #d9dfea !important; color: #5a6578 !important; }
+
+/* Área de Input Blindada contra formatações externas */
+.page-chatbot .chat-input-area { display: flex; padding: 14px 20px; background: #fff; gap: 10px; align-items: center; border-top: 1px solid #f0f0f0; }
+.page-chatbot .chat-input-area input { flex: 1; min-height: 48px; padding: 0 20px !important; border: 1px solid #d9dfea !important; border-radius: 999px !important; font: 500 15px 'Montserrat', sans-serif !important; outline: none !important; color: #1d2b44; background: #fff !important; box-shadow: none !important; margin: 0 !important; }
+.page-chatbot .chat-input-area input:focus { border-color: #0056b3 !important; }
+.page-chatbot .chat-input-area button { width: 48px !important; height: 48px !important; border-radius: 50% !important; background: #0056b3 !important; color: #fff !important; border: none !important; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; flex-shrink: 0; padding: 0 !important; margin: 0 !important; }
+.page-chatbot .chat-input-area button:hover:not(:disabled) { background: #004085 !important; transform: scale(1.05); }
+.page-chatbot .chat-input-area button:disabled { background: #d9dfea !important; cursor: not-allowed; transform: none; }
+
+/* Ajustes Mobile */
+@media (max-width: 600px) {
+    .page-chatbot .page-hero { padding: 20px 0 40px; }
+    .page-chatbot .chat-main { padding: 0 10px; margin-top: -20px; margin-bottom: 10px; }
+    .page-chatbot .chat-container { border-radius: 12px; }
+    .page-chatbot .message-bubble { max-width: 90%; font-size: 14px; }
+    .page-chatbot .chat-input-area { padding: 10px; }
+    .page-chatbot .chat-input-area input { min-height: 44px; padding: 0 16px !important; }
+    .page-chatbot .chat-input-area button { width: 44px !important; height: 44px !important; }
 }

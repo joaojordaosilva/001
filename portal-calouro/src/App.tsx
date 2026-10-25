@@ -5,6 +5,7 @@ import Tutoriais from './pages/Tutoriais';
 import Disciplinas from './pages/Disciplinas';
 import Calculadora from './pages/Calculadora';
 import Calouro from './pages/Calouro';
+import Chatbot from './pages/Chatbot';
 
 function App() {
   const [paginaAtiva, setPaginaAtiva] = useState('inicio');
@@ -17,6 +18,7 @@ function App() {
       case 'tutoriais': return <Tutoriais />;
       case 'disciplinas': return <Disciplinas />;
       case 'calculadora': return <Calculadora />;
+      case 'chatbot': return <Chatbot setPaginaAtiva={setPaginaAtiva} />;
       default: return <Home setPaginaAtiva={setPaginaAtiva} />;
     }
   };
@@ -41,27 +43,34 @@ function App() {
         {renderizarPagina()}
       </div>
 
-      <footer className="site-footer">
-        <div className="footer-content">
-            <div className="footer-section">
-                <h4>Equipe de Desenvolvimento</h4>
-                <p><strong>João:</strong> Front-end & UI/UX<br/>
-                   <strong>Josivaldo:</strong> Back-end & Arquitetura<br/>
-                   <strong>Dárcio:</strong> Banco de Dados & Gestão</p>
-            </div>
-            <div className="footer-section">
-                <h4>Suporte e Links Úteis</h4>
-                <p>Email: suporte-calouros@ic.br<br/>
-                   Coordenação: (00) 0000-0000<br/>
-                   <a href="#" style={{color: '#ffc107', textDecoration: 'none'}}>Portal Institucional Oficial</a></p>
-            </div>
-        </div>
-        <div className="footer-bottom">
-            <p>&copy; 2026 Instituto de Computação - Portal do Calouro</p>
-        </div>
-      </footer>
+      {/* O rodapé SÓ aparece se não estivermos na página do Chatbot */}
+      {paginaAtiva !== 'chatbot' && (
+        <footer className="site-footer">
+          <div className="footer-content">
+              <div className="footer-section">
+                  <h4>Equipe de Desenvolvimento</h4>
+                  <p><strong>João:</strong> Front-end & UI/UX<br/>
+                     <strong>Josivaldo:</strong> Back-end & Arquitetura<br/>
+                     <strong>Dárcio:</strong> Banco de Dados & Gestão</p>
+              </div>
+              <div className="footer-section">
+                  <h4>Suporte e Links Úteis</h4>
+                  <p>Email: suporte-calouros@ic.br<br/>
+                     Coordenação: (00) 0000-0000<br/>
+                     <a href="#" style={{color: '#ffc107', textDecoration: 'none'}}>Portal Institucional Oficial</a></p>
+              </div>
+          </div>
+          <div className="footer-bottom">
+              <p>&copy; 2026 Instituto de Computação - Portal do Calouro</p>
+          </div>
+        </footer>
+      )}
 
-      <a href="#" className="floating-btn">💬 Chatbot</a>
+      {paginaAtiva !== 'chatbot' && (
+        <a href="#" onClick={(e) => { e.preventDefault(); setPaginaAtiva('chatbot'); }} className="floating-btn">
+          💬 Chatbot
+        </a>
+      )}
     </>
   );
 }

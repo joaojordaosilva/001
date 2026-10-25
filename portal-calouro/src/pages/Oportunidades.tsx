@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 
 /* =====================================================================
    MOLDES DO TYPESCRIPT
@@ -134,52 +134,91 @@ export default function Oportunidades() {
   const [busca, setBusca] = useState("");
   const [categoriaAtiva, setCategoriaAtiva] = useState("todos");
   
-  // Estados para a Lógica do Botão e Menu
   const [scrolled, setScrolled] = useState(false);
   const [btnShrunk, setBtnShrunk] = useState(false);
   const [menuAberto, setMenuAberto] = useState(false);
+
+  // Estados e Referências para a Lógica de Arrastar (Drag & Drop)
+  const [btnPos, setBtnPos] = useState({ x: 16, y: 100 }); // Posição inicial: Canto superior esquerdo
+  const [isDragging, setIsDragging] = useState(false);
+  const dragInfo = useRef({ startX: 0, startY: 0, initX: 0, initY: 0, moved: false });
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  // Monitoriza a rolagem da página para esconder/mostrar o botão
+  // Monitoriza a rolagem
   useEffect(() => {
     const onScroll = () => {
-      // 380px é aproximadamente quando o banner com os filtros sai do ecrã
       if (window.scrollY > 380) {
         setScrolled(true);
       } else {
         setScrolled(false);
-        setBtnShrunk(false); // Reseta o estado ao voltar para o topo
+        setBtnShrunk(false);
       }
     };
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Gere os 3 segundos de expansão automática quando o botão aparece
+  // Encolhimento automático após 3 segundos
   useEffect(() => {
     let timer: number;
-    if (scrolled && !menuAberto) {
-      setBtnShrunk(false); // Garante que nasce aberto
+    if (scrolled && !menuAberto && !isDragging) {
+      setBtnShrunk(false);
       timer = window.setTimeout(() => {
-        setBtnShrunk(true); // Encolhe após 3 segundos
+        setBtnShrunk(true);
       }, 3000);
     }
     return () => clearTimeout(timer);
-  }, [scrolled, menuAberto]);
+  }, [scrolled, menuAberto, isDragging]);
 
-  // Ação de clicar no botão flutuante
-  const handleBtnClick = () => {
-    if (btnShrunk) {
-      setBtnShrunk(false); // Se está encolhido (só o ícone), expande a palavra
-    } else {
-      setMenuAberto(true); // Se já está expandido, abre o menu
+  /* --- Lógica de Drag & Drop --- */
+  const onPointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
+    dragInfo.current = {
+      startX: e.clientX, startY: e.clientY,
+      initX: btnPos.x, initY: btnPos.y,
+      moved: false
+    };
+    setIsDragging(true);
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const onPointerMove = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (!isDragging) return;
+    const dx = e.clientX - dragInfo.current.startX;
+    const dy = e.clientY - dragInfo.current.startY;
+
+    // Se moveu mais de 5px, consideramos que é um arraste e não um clique
+    if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+      dragInfo.current.moved = true;
+      setBtnShrunk(true); // Encolhe o botão imediatamente ao arrastar para não cobrir a tela
+    }
+
+    if (dragInfo.current.moved) {
+      setBtnPos({
+        x: Math.max(0, Math.min(window.innerWidth - 60, dragInfo.current.initX + dx)),
+        y: Math.max(0, Math.min(window.innerHeight - 60, dragInfo.current.initY + dy))
+      });
     }
   };
 
-  // Ação centralizada para fechar o menu (encolhe o botão automaticamente)
+  const onPointerUp = (e: React.PointerEvent<HTMLButtonElement>) => {
+    setIsDragging(false);
+    e.currentTarget.releasePointerCapture(e.pointerId);
+  };
+
+  const onClick = (e: React.MouseEvent) => {
+    // Se o botão foi arrastado, ignoramos o clique de abertura
+    if (dragInfo.current.moved) {
+      e.preventDefault();
+      return;
+    }
+    // Lógica normal de clique
+    if (btnShrunk) setBtnShrunk(false);
+    else setMenuAberto(true);
+  };
+
   const fecharMenu = () => {
     setMenuAberto(false);
     setBtnShrunk(true); 
@@ -211,7 +250,6 @@ export default function Oportunidades() {
     return result;
   }, [busca, categoriaAtiva]);
 
-  // Função para navegar pelo menu
   const clicaLinkMenu = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
     fecharMenu();
@@ -247,10 +285,15 @@ export default function Oportunidades() {
         </nav>
       </aside>
 
-      {/* BOTÃO FLUTUANTE DINÂMICO */}
+      {/* ================= BOTÃO FLUTUANTE DINÂMICO E MÓVEL ================= */}
       <button 
-        className={`btn-menu-lateral ${!scrolled ? 'is-hidden' : ''} ${btnShrunk ? 'is-shrunk' : ''}`} 
-        onClick={handleBtnClick} 
+        className={`btn-menu-lateral ${!scrolled ? 'is-hidden' : ''} ${btnShrunk ? 'is-shrunk' : ''} ${isDragging ? 'is-dragging' : ''}`} 
+        style={{ left: `${btnPos.x}px`, top: `${btnPos.y}px` }}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        onClick={onClick}
         aria-label="Abrir Menu de Tópicos"
       >
         <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
@@ -260,7 +303,7 @@ export default function Oportunidades() {
         </svg>
         <span className="btn-text">Navegar</span>
       </button>
-      {/* ================================================ */}
+      {/* ==================================================================== */}
 
       <div className="page-hero">
         <div className="wrap">
@@ -297,7 +340,6 @@ export default function Oportunidades() {
           secoesFiltradas.map(sec => (
             <section id={sec.id} key={sec.id} className="oport-section">
               
-              {/* TÍTULO DA SEÇÃO */}
               <div className="sec-header">
                 <div className="ico">{sec.icone}</div>
                 <div>
@@ -306,7 +348,6 @@ export default function Oportunidades() {
                 </div>
               </div>
               
-              {/* CARTÕES ABERTOS */}
               <div className="wins">
                 {sec.itens.map(item => (
                   <article className="win" key={item.id}>
