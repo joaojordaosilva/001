@@ -138,16 +138,15 @@ export default function Oportunidades() {
   const [btnShrunk, setBtnShrunk] = useState(false);
   const [menuAberto, setMenuAberto] = useState(false);
 
-  // Estados e Referências para a Lógica de Arrastar (Drag & Drop)
-  const [btnPos, setBtnPos] = useState({ x: 16, y: 100 }); // Posição inicial: Canto superior esquerdo
+  // Estados e Referências para a Lógica de Arrastar (Drag & Drop) apenas no eixo Y
+  const [btnPosY, setBtnPosY] = useState(100); 
   const [isDragging, setIsDragging] = useState(false);
-  const dragInfo = useRef({ startX: 0, startY: 0, initX: 0, initY: 0, moved: false });
+  const dragInfo = useRef({ startX: 0, startY: 0, initY: 0, moved: false });
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  // Monitoriza a rolagem
   useEffect(() => {
     const onScroll = () => {
       if (window.scrollY > 380) {
@@ -161,7 +160,6 @@ export default function Oportunidades() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Encolhimento automático após 3 segundos
   useEffect(() => {
     let timer: number;
     if (scrolled && !menuAberto && !isDragging) {
@@ -173,12 +171,11 @@ export default function Oportunidades() {
     return () => clearTimeout(timer);
   }, [scrolled, menuAberto, isDragging]);
 
-  /* --- Lógica de Drag & Drop --- */
+  /* --- Lógica de Drag Vertical --- */
   const onPointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
     dragInfo.current = {
       startX: e.clientX, startY: e.clientY,
-      initX: btnPos.x, initY: btnPos.y,
-      moved: false
+      initY: btnPosY, moved: false
     };
     setIsDragging(true);
     e.currentTarget.setPointerCapture(e.pointerId);
@@ -186,20 +183,18 @@ export default function Oportunidades() {
 
   const onPointerMove = (e: React.PointerEvent<HTMLButtonElement>) => {
     if (!isDragging) return;
-    const dx = e.clientX - dragInfo.current.startX;
     const dy = e.clientY - dragInfo.current.startY;
+    const dx = e.clientX - dragInfo.current.startX;
 
-    // Se moveu mais de 5px, consideramos que é um arraste e não um clique
-    if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+    // Confirma que é um arrasto e não um clique acidental
+    if (Math.abs(dy) > 5 || Math.abs(dx) > 5) {
       dragInfo.current.moved = true;
-      setBtnShrunk(true); // Encolhe o botão imediatamente ao arrastar para não cobrir a tela
+      setBtnShrunk(true); // Encolhe ao arrastar
     }
 
     if (dragInfo.current.moved) {
-      setBtnPos({
-        x: Math.max(0, Math.min(window.innerWidth - 60, dragInfo.current.initX + dx)),
-        y: Math.max(0, Math.min(window.innerHeight - 60, dragInfo.current.initY + dy))
-      });
+      // Limita a movimentação apenas à altura da tela (Y)
+      setBtnPosY(Math.max(10, Math.min(window.innerHeight - 60, dragInfo.current.initY + dy)));
     }
   };
 
@@ -209,14 +204,12 @@ export default function Oportunidades() {
   };
 
   const onClick = (e: React.MouseEvent) => {
-    // Se o botão foi arrastado, ignoramos o clique de abertura
     if (dragInfo.current.moved) {
       e.preventDefault();
       return;
     }
-    // Lógica normal de clique
-    if (btnShrunk) setBtnShrunk(false);
-    else setMenuAberto(true);
+    // 1 clique abre o menu imediatamente, seja encolhido ou não
+    setMenuAberto(true);
   };
 
   const fecharMenu = () => {
@@ -285,10 +278,10 @@ export default function Oportunidades() {
         </nav>
       </aside>
 
-      {/* ================= BOTÃO FLUTUANTE DINÂMICO E MÓVEL ================= */}
+      {/* ================= BOTÃO FLUTUANTE DINÂMICO E VERTICAL ================= */}
       <button 
         className={`btn-menu-lateral ${!scrolled ? 'is-hidden' : ''} ${btnShrunk ? 'is-shrunk' : ''} ${isDragging ? 'is-dragging' : ''}`} 
-        style={{ left: `${btnPos.x}px`, top: `${btnPos.y}px` }}
+        style={{ top: `${btnPosY}px` }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}

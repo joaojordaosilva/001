@@ -293,33 +293,34 @@ details.main-topic > summary { font-size: 18px; color: #0056b3; background-color
 .sidebar-nav a:hover { background: #fff; border-color: var(--blue); color: var(--blue); box-shadow: 0 2px 5px rgba(0,0,0,0.04); }
 .sidebar-nav a .ico { font-size: 20px; }
 
-/* Botão Flutuante Dinâmico e Móvel (Arrastável) */
+/* Botão Flutuante Dinâmico e Móvel (Arrastável Verticalmente) */
 .btn-menu-lateral {
     position: fixed; 
+    left: 0 !important; /* Fixa rigorosamente na margem esquerda */
     background: var(--blue); color: #fff; 
-    padding: 14px 18px; border-radius: 50px; border: none; cursor: grab; 
+    padding: 14px 18px 14px 14px; border-radius: 0 50px 50px 0; border: none; cursor: grab; 
     font: 700 14px 'Montserrat', Arial, sans-serif; box-shadow: 2px 4px 12px rgba(0,86,179,0.3); 
     z-index: 990; 
-    /* Removemos a transição de posição para não dar lag ao arrastar */
-    transition: padding 0.4s ease, gap 0.4s ease, background 0.2s, opacity 0.4s ease, transform 0.3s ease;
+    transition: padding 0.3s ease, gap 0.3s ease, background 0.2s, opacity 0.3s ease, transform 0.2s ease;
     display: flex; align-items: center; justify-content: center; gap: 8px; overflow: hidden;
-    touch-action: none; /* Essencial: Impede a tela do celular de rolar enquanto o utilizador arrasta o botão */
+    touch-action: none; /* Essencial para arrastar suavemente no celular sem bugar a tela */
 }
 .btn-menu-lateral:hover { background: var(--blue-dark); }
-.btn-menu-lateral:active, .btn-menu-lateral.is-dragging { cursor: grabbing; transform: scale(1.05); }
+.btn-menu-lateral:active, .btn-menu-lateral.is-dragging { cursor: grabbing; transform: scale(1.03); }
 
-/* Estado 1: Oculto (quando a tela volta ao topo) */
-.btn-menu-lateral.is-hidden { opacity: 0; pointer-events: none; transform: scale(0.8); }
+/* Estado 1: Oculto */
+.btn-menu-lateral.is-hidden { opacity: 0; pointer-events: none; transform: translateX(-100%); }
 
-/* Estado 2: Encolhido (passa a ser uma bolinha compacta) */
-.btn-menu-lateral.is-shrunk { padding: 14px; gap: 0; }
-.btn-menu-lateral .btn-text { display: inline-block; max-width: 100px; opacity: 1; transition: max-width 0.4s ease, opacity 0.4s ease; white-space: nowrap; }
+/* Estado 2: Encolhido */
+.btn-menu-lateral.is-shrunk { padding: 14px 12px; gap: 0; }
+.btn-menu-lateral .btn-text { display: inline-block; max-width: 100px; opacity: 1; transition: max-width 0.3s ease, opacity 0.3s ease; white-space: nowrap; }
 .btn-menu-lateral.is-shrunk .btn-text { max-width: 0; opacity: 0; }
 
-/* Ajustes apenas para o tamanho no Mobile, sem forçar posições fixas! */
+/* Ajustes formatados para Mobile */
 @media (max-width: 600px) {
-    .btn-menu-lateral { padding: 12px 16px; font-size: 13px; }
-    .btn-menu-lateral.is-shrunk { padding: 12px; }
+    .btn-menu-lateral { padding: 12px 16px 12px 12px; font-size: 13px; }
+    .btn-menu-lateral.is-shrunk { padding: 12px 10px; }
+    .btn-menu-lateral svg { width: 20px; height: 20px; }
 }
 
 /* Banner / Topo */
