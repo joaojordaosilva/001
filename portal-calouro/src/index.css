@@ -296,14 +296,16 @@ details.main-topic > summary { font-size: 18px; color: #0056b3; background-color
 /* Botão Flutuante Dinâmico e Móvel (Arrastável Verticalmente) */
 .btn-menu-lateral {
     position: fixed; 
-    left: 0 !important; /* Fixa rigorosamente na margem esquerda */
+    left: 0 !important; 
+    bottom: auto !important; /* <-- CORREÇÃO: Mata qualquer regra antiga que o prendia em baixo */
+    height: max-content !important; /* <-- CORREÇÃO: Impede que o botão estique na vertical */
     background: var(--blue); color: #fff; 
     padding: 14px 18px 14px 14px; border-radius: 0 50px 50px 0; border: none; cursor: grab; 
     font: 700 14px 'Montserrat', Arial, sans-serif; box-shadow: 2px 4px 12px rgba(0,86,179,0.3); 
     z-index: 990; 
     transition: padding 0.3s ease, gap 0.3s ease, background 0.2s, opacity 0.3s ease, transform 0.2s ease;
     display: flex; align-items: center; justify-content: center; gap: 8px; overflow: hidden;
-    touch-action: none; /* Essencial para arrastar suavemente no celular sem bugar a tela */
+    touch-action: none;
 }
 .btn-menu-lateral:hover { background: var(--blue-dark); }
 .btn-menu-lateral:active, .btn-menu-lateral.is-dragging { cursor: grabbing; transform: scale(1.03); }
@@ -318,11 +320,10 @@ details.main-topic > summary { font-size: 18px; color: #0056b3; background-color
 
 /* Ajustes formatados para Mobile */
 @media (max-width: 600px) {
-    .btn-menu-lateral { padding: 12px 16px 12px 12px; font-size: 13px; }
+    .btn-menu-lateral { padding: 12px 16px 12px 12px; font-size: 13px; bottom: auto !important; }
     .btn-menu-lateral.is-shrunk { padding: 12px 10px; }
     .btn-menu-lateral svg { width: 20px; height: 20px; }
 }
-
 /* Banner / Topo */
 .page-oportunidades .page-hero { color: #fff; padding: 56px 0 44px; background: radial-gradient(rgba(255,255,255,0.10) 1.2px, transparent 1.4px) 0 0 / 28px 28px, linear-gradient(115deg, var(--blue-deep) 0%, var(--blue) 55%, #1a76d2 100%); }
 .page-oportunidades .page-hero .wrap { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
