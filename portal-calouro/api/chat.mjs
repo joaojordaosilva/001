@@ -179,6 +179,22 @@ function respostaRapida(mensagem) {
 
 export default async function handler(request) {
 
+  // TESTE: acesso pelo navegador
+  if (request.method === "GET") {
+    return new Response(
+      JSON.stringify({
+        status: "ok",
+        mensagem: "API do chatbot GIC funcionando!"
+      }),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
+  }
+
   if (request.method !== "POST") {
     return new Response(
       JSON.stringify({
