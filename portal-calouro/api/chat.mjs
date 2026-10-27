@@ -1,17 +1,11 @@
 import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY
-});
-
-// 1. Usando a estrutura correta (req, res) exigida pela Vercel
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ erro: "Método não permitido." });
   }
 
   try {
-    // 2. Extraindo os dados corretamente sem usar o request.json() que dava erro
     const { mensagem, historico = [] } = req.body;
 
     if (!mensagem || !mensagem.trim()) {
@@ -23,11 +17,7 @@ export default async function handler(req, res) {
     return res.status(200).json(resposta);
 
   } catch (erro) {
-    console.error("=================================");
-    console.error("ERRO NO CHATBOT:");
-    console.error(erro);
-    console.error("=================================");
-
+    console.error("ERRO NO CHATBOT:", erro);
     return res.status(500).json({
       resolvido: false,
       resposta: "Não consegui consultar o assistente neste momento.\n\nPor segurança, recomendo procurar a Secretaria ou a Coordenação do curso.",
@@ -37,6 +27,12 @@ export default async function handler(req, res) {
 }
 
 async function gerarRespostaIA(mensagem, historico) {
+  // A SOLUÇÃO: A IA é inicializada aqui dentro, garantindo que a ligação 
+  // não fica pendurada no servidor da Vercel após a resposta.
+  const ai = new GoogleGenAI({
+    apiKey: process.env.GEMINI_API_KEY
+  });
+
   const contextoHistorico = historico
     .slice(-6)
     .map(msg => `${msg.remetente}: ${msg.texto}`)
@@ -63,32 +59,20 @@ ${mensagem}
   const schema = {
     type: "object",
     properties: {
-      resolvido: {
-        type: "boolean",
-        description: "Indica se a IA conseguiu responder a dúvida com segurança."
-      },
-      resposta: {
-        type: "string",
-        description: "Resposta que será apresentada ao aluno."
-      },
+      resolvido: { type: "boolean" },
+      resposta: { type: "string" },
       setor: {
         type: "string",
         enum: [
-          "Nenhum",
-          "Secretaria",
-          "Coordenação do curso",
-          "Assistência Estudantil",
-          "Departamento responsável",
-          "Professor/Docente"
-        ],
-        description: "Setor que o aluno deve procurar caso a dúvida não tenha sido resolvida."
+          "Nenhum", "Secretaria", "Coordenação do curso", 
+          "Assistência Estudantil", "Departamento responsável", "Professor/Docente"
+        ]
       }
     },
     required: ["resolvido", "resposta", "setor"]
   };
 
   const response = await ai.models.generateContent({
-    // 3. O modelo 3.8 que a Google exige, como o Josivaldo tinha feito no início!
     model: "gemini-3.8-flash", 
     contents: prompt,
     config: {
@@ -96,9 +80,6 @@ ${mensagem}
       responseSchema: schema
     }
   });
-
-  console.log("Resposta recebida do Gemini:");
-  console.log(response.text);
 
   return JSON.parse(response.text);
 }
