@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 
+
 function Home({ setPaginaAtiva }: { setPaginaAtiva: (pagina: string) => void }) {
   // Este useEffect recria a lógica de redimensionamento do seu script HTML original
   useEffect(() => {
