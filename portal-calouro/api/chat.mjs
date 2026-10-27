@@ -119,7 +119,7 @@ ${mensagem}
   };
 
   const response = await ai.models.generateContent({
-    model: "gemini-1.5-flash", // <-- 3. CORRIGIDO PARA O MODELO VÁLIDO DA GOOGLE
+    model: "gemini-2.5-flash", // <-- 3. CORRIGIDO PARA O MODELO VÁLIDO DA GOOGLE
     contents: prompt,
     config: {
       responseMimeType: "application/json",
