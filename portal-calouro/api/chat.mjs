@@ -1,16 +1,13 @@
 import OpenAI from "openai";
 
-// 1. Inicializa a OpenAI lendo a chave configurada na Vercel (process.env.OPENAI_API_KEY)
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
+// 1. Usando a estrutura correta (req, res) exigida pela Vercel
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ erro: "Método não permitido." });
   }
 
   try {
+    // 2. Extraindo os dados da requisição
     const { mensagem, historico = [] } = req.body;
 
     if (!mensagem || !mensagem.trim()) {
@@ -33,6 +30,10 @@ export default async function handler(req, res) {
 
 async function gerarRespostaIA(mensagem, historico) {
   
+  const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+
   const contextoHistorico = historico
     .slice(-6)
     .map(msg => `${msg.remetente}: ${msg.texto}`)
@@ -61,7 +62,7 @@ REGRAS IMPORTANTES:
     ],
     temperature: 0.1, // Mantém a temperatura baixa para não inventar dados
     
-  
+    // Força a IA a devolver exatamente o mesmo SCHEMA que o seu site já processa
     response_format: {
       type: "json_schema",
       json_schema: {
