@@ -23,11 +23,7 @@ export default async function handler(req, res) {
     return res.status(200).json(resposta);
 
   } catch (erro) {
-    console.error("=================================");
-    console.error("ERRO NO CHATBOT:");
-    console.error(erro);
-    console.error("=================================");
-
+    console.error("ERRO NO CHATBOT:", erro);
     return res.status(500).json({
       resolvido: false,
       resposta: "Não consegui consultar o assistente neste momento.\n\nPor segurança, recomendo procurar a Secretaria ou a Coordenação do curso.",
@@ -37,6 +33,12 @@ export default async function handler(req, res) {
 }
 
 async function gerarRespostaIA(mensagem, historico) {
+  // A SOLUÇÃO: A IA é inicializada aqui dentro, garantindo que a ligação 
+  // não fica pendurada no servidor da Vercel após a resposta.
+  const ai = new GoogleGenAI({
+    apiKey: process.env.GEMINI_API_KEY
+  });
+
   const contextoHistorico = historico
     .slice(-6)
     .map(msg => `${msg.remetente}: ${msg.texto}`)
@@ -63,25 +65,14 @@ ${mensagem}
   const schema = {
     type: "object",
     properties: {
-      resolvido: {
-        type: "boolean",
-        description: "Indica se a IA conseguiu responder a dúvida com segurança."
-      },
-      resposta: {
-        type: "string",
-        description: "Resposta que será apresentada ao aluno."
-      },
+      resolvido: { type: "boolean" },
+      resposta: { type: "string" },
       setor: {
         type: "string",
         enum: [
-          "Nenhum",
-          "Secretaria",
-          "Coordenação do curso",
-          "Assistência Estudantil",
-          "Departamento responsável",
-          "Professor/Docente"
-        ],
-        description: "Setor que o aluno deve procurar caso a dúvida não tenha sido resolvida."
+          "Nenhum", "Secretaria", "Coordenação do curso", 
+          "Assistência Estudantil", "Departamento responsável", "Professor/Docente"
+        ]
       }
     },
     required: ["resolvido", "resposta", "setor"]
@@ -96,9 +87,6 @@ ${mensagem}
       responseSchema: schema
     }
   });
-
-  console.log("Resposta recebida do Gemini:");
-  console.log(response.text);
 
   return JSON.parse(response.text);
 }
