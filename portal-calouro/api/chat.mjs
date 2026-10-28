@@ -1,4 +1,6 @@
 import OpenAI from "openai";
+import fs from "fs";
+import path from "path";
 
 // 1. Usando a estrutura correta (req, res) exigida pela Vercel
 export default async function handler(req, res) {
@@ -34,11 +36,16 @@ async function gerarRespostaIA(mensagem, historico) {
     apiKey: process.env.OPENAI_API_KEY,
   });
 
+  // 1. Ler o ficheiro Markdown localmente no servidor da Vercel
+  const caminhoFicheiro = path.join(process.cwd(), 'api', 'base_conhecimento.md');
+  const baseDeConhecimento = fs.readFileSync(caminhoFicheiro, 'utf-8');
+
   const contextoHistorico = historico
     .slice(-6)
     .map(msg => `${msg.remetente}: ${msg.texto}`)
     .join("\n");
 
+  // 2. Injetar a base de conhecimento nas regras do prompt
   const promptSistema = `
 Você é o assistente virtual oficial do GIC (Guia do Ingressante em Computação) do Instituto de Computação (IC) da UFAL.
 Seu objetivo é ajudar alunos ingressantes do curso de Computação.
@@ -47,11 +54,14 @@ REGRA DE OURO: Você é EXCLUSIVO para assuntos do IC, do curso de Ciência da C
 Se o aluno perguntar sobre assuntos fora deste escopo (futebol, receitas, etc), recuse educadamente.
 
 REGRAS IMPORTANTES:
-1. Nunca invente informações.
-2. Se você tiver segurança suficiente para responder, responda de maneira clara e objetiva.
-3. Se a pergunta depender de uma informação institucional que você não conhece ou não consegue confirmar, considere que a dúvida NÃO foi resolvida.
+1. Baseie a sua resposta ESTRITAMENTE na BASE DE CONHECIMENTO INSTITUCIONAL abaixo.
+2. Nunca invente informações. Se a informação não constar na base, considere que a dúvida NÃO foi resolvida.
+3. Se você tiver segurança suficiente para responder, responda de maneira clara e objetiva.
 4. Quando não conseguir resolver a dúvida, indique o setor que o aluno deve procurar.
 5. Os setores permitidos são: Secretaria, Coordenação do curso, Assistência Estudantil, Departamento responsável, Professor/Docente.
+
+BASE DE CONHECIMENTO INSTITUCIONAL:
+${baseDeConhecimento}
 `;
 
   const response = await openai.chat.completions.create({
@@ -62,7 +72,7 @@ REGRAS IMPORTANTES:
     ],
     temperature: 0.1, // Mantém a temperatura baixa para não inventar dados
     
-    // Força a IA a devolver exatamente o mesmo SCHEMA que o seu site já processa
+    // Força a IA a devolver exatamente o mesmo SCHEMA  que o site processa
     response_format: {
       type: "json_schema",
       json_schema: {
